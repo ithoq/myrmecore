@@ -140,3 +140,24 @@ ALTER TABLE "myrmecore"."readings" OWNER TO "postgres";;
 -- ----------------------------
 -- Records of readings
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for `sessions`
+-- ----------------------------
+DROP TABLE "sessions";
+CREATE TABLE "myrmecore"."sessions" (
+"session_id" varchar(40) DEFAULT '0' NOT NULL,
+"ip_address" varchar(16) DEFAULT '0' NOT NULL,
+"user_agent" varchar(50) DEFAULT NULL NOT NULL,
+"last_activity" int4 DEFAULT 0 NOT NULL,
+"user_data" text DEFAULT NULL NOT NULL,
+CONSTRAINT "sessions_pkey" PRIMARY KEY ("session_id")
+)
+WITH (OIDS=FALSE)
+;
+
+ALTER TABLE "myrmecore"."sessions" OWNER TO "postgres";;
+
+-- ----------------------------
+-- Records of sessions
+-- ----------------------------

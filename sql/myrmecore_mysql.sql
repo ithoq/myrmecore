@@ -23,7 +23,7 @@ CREATE TABLE `alerts` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `cleared` bit(1) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`id`,`cleared`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
 
 -- ----------------------------
 -- Records of alerts
@@ -40,7 +40,7 @@ CREATE TABLE `locations` (
   `longitude` float(9,6) NOT NULL DEFAULT '0.000000',
   `height` smallint(5) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`,`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
 
 -- ----------------------------
 -- Records of locations
@@ -55,7 +55,7 @@ CREATE TABLE `nodes` (
   `location` mediumint(10) unsigned NOT NULL DEFAULT '0',
   `name` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`,`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1 ROW_FORMAT=FIXED;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
 
 -- ----------------------------
 -- Records of nodes
@@ -72,10 +72,27 @@ CREATE TABLE `readings` (
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `value` float NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=ARCHIVE DEFAULT CHARSET=latin1 ROW_FORMAT=COMPRESSED
+) ENGINE=ARCHIVE DEFAULT CHARSET=utf8 ROW_FORMAT=COMPRESSED
 /*!50100 PARTITION BY HASH (id)
 PARTITIONS 8 */;
 
 -- ----------------------------
 -- Records of readings
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `sessions`
+-- ----------------------------
+DROP TABLE IF EXISTS `sessions`;
+CREATE TABLE `sessions` (
+  `session_id` varchar(40) DEFAULT '0' NOT NULL,
+  `ip_address` varchar(16) DEFAULT '0' NOT NULL,
+  `user_agent` varchar(50) NOT NULL,
+  `last_activity` int(10) unsigned DEFAULT 0 NOT NULL,
+  `user_data` text NOT NULL,
+PRIMARY KEY (`session_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
+
+-- ----------------------------
+-- Records of sessions
 -- ----------------------------
