@@ -1,23 +1,30 @@
 /*!
- * Ext JS Library 3.3.1
- * Copyright(c) 2006-2010 Sencha Inc.
- * licensing@sencha.com
- * http://www.sencha.com/license
+ * MyrmeCore
+ *
+ * A Web-based Wireless Sensor Network Management System
+ *
+ * @package         MyrmeCore
+ * @author          Juan F. Duque <jfelipe@grupodyd.com>
+ * @copyright       Copyright (c) 2011, Dinamica y Desarrollo Ltda.
+ * @license         http://www.myrmecore.com/license/
+ * @link            http://www.myrmecore.com
+ * @since           Version 0.1
+ * @filesource 
  */
 
-// Sample desktop configuration
-MyDesktop = new Ext.app.App({
+// MyrmeCore Desktop Configuration
+MyrmeCoreDesktop = new Ext.app.App({
 	init :function(){
 		Ext.QuickTips.init();
 	},
 
 	getModules : function(){
 		return [
-			new MyDesktop.GridWindow(),
-            new MyDesktop.TabWindow(),
-            new MyDesktop.AccordionWindow(),
-            new MyDesktop.BogusMenuModule(),
-            new MyDesktop.BogusModule()
+			new MyrmeCoreDesktop.GridWindow(),
+            new MyrmeCoreDesktop.TabWindow(),
+            new MyrmeCoreDesktop.AccordionWindow(),
+            new MyrmeCoreDesktop.BogusMenuModule(),
+            new MyrmeCoreDesktop.BogusModule()
 		];
 	},
 
@@ -44,7 +51,7 @@ MyDesktop = new Ext.app.App({
 /*
  * Example windows
  */
-MyDesktop.GridWindow = Ext.extend(Ext.app.Module, {
+MyrmeCoreDesktop.GridWindow = Ext.extend(Ext.app.Module, {
     id:'grid-win',
     init : function(){
         this.launcher = {
@@ -117,7 +124,7 @@ MyDesktop.GridWindow = Ext.extend(Ext.app.Module, {
 
 
 
-MyDesktop.TabWindow = Ext.extend(Ext.app.Module, {
+MyrmeCoreDesktop.TabWindow = Ext.extend(Ext.app.Module, {
     id:'tab-win',
     init : function(){
         this.launcher = {
@@ -178,7 +185,7 @@ MyDesktop.TabWindow = Ext.extend(Ext.app.Module, {
 
 
 
-MyDesktop.AccordionWindow = Ext.extend(Ext.app.Module, {
+MyrmeCoreDesktop.AccordionWindow = Ext.extend(Ext.app.Module, {
     id:'acc-win',
     init : function(){
         this.launcher = {
@@ -320,7 +327,7 @@ MyDesktop.AccordionWindow = Ext.extend(Ext.app.Module, {
 // for example purposes
 var windowIndex = 0;
 
-MyDesktop.BogusModule = Ext.extend(Ext.app.Module, {
+MyrmeCoreDesktop.BogusModule = Ext.extend(Ext.app.Module, {
     init : function(){
         this.launcher = {
             text: 'Window '+(++windowIndex),
@@ -352,7 +359,7 @@ MyDesktop.BogusModule = Ext.extend(Ext.app.Module, {
 });
 
 
-MyDesktop.BogusMenuModule = Ext.extend(MyDesktop.BogusModule, {
+MyrmeCoreDesktop.BogusMenuModule = Ext.extend(MyrmeCoreDesktop.BogusModule, {
     init : function(){
         this.launcher = {
             text: 'Bogus Submenu',
