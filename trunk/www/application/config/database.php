@@ -5,7 +5,7 @@
 | -------------------------------------------------------------------
 | This file will contain the settings needed to access your database.
 |
-| For complete instructions please consult the "Database Connection"
+| For complete instructions please consult the 'Database Connection'
 | page of the User Guide.
 |
 | -------------------------------------------------------------------
@@ -26,29 +26,36 @@
 |	['cachedir'] The path to the folder where cache files should be stored
 |	['char_set'] The character set used in communicating with the database
 |	['dbcollat'] The character collation used in communicating with the database
+|	['swap_pre'] A default table prefix that should be swapped with the dbprefix
+|	['autoinit'] Whether or not to automatically initialize the database.
+|	['stricton'] TRUE/FALSE - forces 'Strict Mode' connections
+|							- good for ensuring strict SQL while developing
 |
 | The $active_group variable lets you choose which connection group to
-| make active.  By default there is only one group (the "default" group).
+| make active.  By default there is only one group (the 'default' group).
 |
 | The $active_record variables lets you determine whether or not to load
 | the active record class
 */
 
-$active_group = "db_mysql";
+$active_group = 'db_mysql';
 $active_record = TRUE;
 
-$db['db_mysql']['hostname'] = "localhost";
-$db['db_mysql']['username'] = "myrmecore";
-$db['db_mysql']['password'] = "";
-$db['db_mysql']['database'] = "myrmecore";
-$db['db_mysql']['dbdriver'] = "mysqli";
-$db['db_mysql']['dbprefix'] = "";
+$db['db_mysql']['hostname'] = 'localhost';
+$db['db_mysql']['username'] = 'myrmecore';
+$db['db_mysql']['password'] = '';
+$db['db_mysql']['database'] = 'myrmecore';
+$db['db_mysql']['dbdriver'] = 'mysqli';
+$db['db_mysql']['dbprefix'] = '';
 $db['db_mysql']['pconnect'] = TRUE;
 $db['db_mysql']['db_debug'] = TRUE;
 $db['db_mysql']['cache_on'] = FALSE;
-$db['db_mysql']['cachedir'] = "";
-$db['db_mysql']['char_set'] = "utf8";
-$db['db_mysql']['dbcollat'] = "utf8_general_ci";
+$db['db_mysql']['cachedir'] = '';
+$db['db_mysql']['char_set'] = 'utf8';
+$db['db_mysql']['dbcollat'] = 'utf8_general_ci';
+$db['db_mysql']['swap_pre'] = '';
+$db['db_mysql']['autoinit'] = TRUE;
+$db['db_mysql']['stricton'] = FALSE;
 
 $db['db_postgres']['hostname'] = "localhost";
 $db['db_postgres']['username'] = "myrmecore";
@@ -62,6 +69,10 @@ $db['db_postgres']['cache_on'] = FALSE;
 $db['db_postgres']['cachedir'] = "";
 $db['db_postgres']['char_set'] = "utf8";
 $db['db_postgres']['dbcollat'] = "utf8_general_ci";
+$db['db_postgres']['swap_pre'] = '';
+$db['db_postgres']['autoinit'] = TRUE;
+$db['db_postgres']['stricton'] = FALSE;
+
 
 /* End of file database.php */
-/* Location: ./system/application/config/database.php */
+/* Location: ./application/config/database.php */
