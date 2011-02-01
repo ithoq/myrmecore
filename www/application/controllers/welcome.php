@@ -1,4 +1,4 @@
-<?php
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 /**
  * MyrmeCore
  *
@@ -12,14 +12,13 @@
  * @since		Version 0.1
  * @filesource
  */
+class Welcome extends CI_Controller {
 
-class Welcome extends Controller {
-
-	function Welcome()
+	function __construct()
 	{
-		parent::Controller();	
+		parent::__construct();
 	}
-	
+
 	function index()
 	{
 		$this->load->view('welcome_message');
@@ -27,4 +26,4 @@ class Welcome extends Controller {
 }
 
 /* End of file welcome.php */
-/* Location: ./system/application/controllers/welcome.php */
+/* Location: ./application/controllers/welcome.php */
