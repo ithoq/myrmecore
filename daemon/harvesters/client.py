@@ -12,15 +12,15 @@
 # @since			Version 0.1
 # @filesource
 
-# basic.py - Basic Data Harvester
+# client.py - Client-Server Data Harvester (client-side)
 #
-# This is a basic harvester, designed for single gateway environments, connected via serial port and 
-# with direct database access. The configuration of this script must be done directly on basic.ini file.
+# This is a most advanced harvester. It consists of a client-server architecture that allows bidirectional 
+# communication, especially designed for more complex wireless sensor networks. This is the client-side part.
 
 import ConfigParser
 
-# Read basic.ini configuration file
+# Read client.ini configuration file
 Config = ConfigParser.ConfigParser()
-Config.read("basic.ini")
+Config.read("client.ini")
 
 
