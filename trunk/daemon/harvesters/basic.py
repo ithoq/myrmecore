@@ -18,6 +18,7 @@
 # with direct database access. The configuration of this script must be done directly on basic.ini file.
 
 import ConfigParser
+import logging
 
 # Read basic.ini configuration file
 Config = ConfigParser.ConfigParser()
