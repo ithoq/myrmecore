@@ -17,46 +17,50 @@
 # This is a basic harvester, designed for single gateway environments, connected via serial port and 
 # with direct database access. The configuration of this script must be done directly on basic.ini file.
 
+import os
 import ConfigParser
 import logging
 from sqlalchemy import *
+from sqlalchemy.exceptions import SQLAlchemyError
 
 # Read basic.ini configuration file
 Config = ConfigParser.ConfigParser()
 Config.read("basic.ini")
 
 # Create logger
-logLevel = "logging." + Config.get("main","Level")
-logFile = Config.get("main","Logfile")
-basic_logger = logging.getLogger("basic_harvester")
-basic_logger.setlevel = Config.get("main","Level")
-logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',filename=logFile)
+logLevel = Config.get("main","Level")
+logPath = Config.get("main","Logpath")
 
-logging.debug('Harvester Status: STARTED')
-logging.info('Harvester Status: STARTED')
+logger = logging.getLogger("basic_harvester")
+logger.setLevel(int(logLevel))
+logEfLevel = logger.getEffectiveLevel()
+filehandler = logging.FileHandler(os.path.join(logPath,'basic_harvester.log'),'a')
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+filehandler.setFormatter(formatter)
+logger.addHandler(filehandler)
+
+logger.debug('Harvester Status: STARTED')
+logger.info('Logging Level: ' + logging.getLevelName(int(logLevel)))
+logger.info('Logging Effective Level: ' + str(logEfLevel))
+logger.info('Logging Filename: ' + logPath + "basic_harvester.log")
 
 # Connect to Database
 
 dbDriver = Config.get("database","Driver")
-print dbDriver
+dbhost = Config.get("database","Hostname")
+dbuser = Config.get("database","Username")
+dbpass = Config.get("database","Password")
+dbname = Config.get("database","Database")
+dbenco = Config.get("database","Charset")
 
-if dbDriver == "mysqli":
-  logging.debug('MySQL driver selected')
-  logging.info('MySQL driver selected')
-  dbhost = Config.get("database","Hostname")
-  dbuser = Config.get("database","Username")
-  dbpass = Config.get("database","Password")
-  dbname = Config.get("database","Database")
-  db = create_engine('mysql://scott:tiger@localhost/demodb')
-elif dbDriver == "postgres":
-  logging.debug('PostgreSQL driver selected')
-  logging.info('PostgreSQL driver selected')
-  dbhost = Config.get("database","Hostname")
-  dbuser = Config.get("database","Username")
-  dbpass = Config.get("database","Password")
-  dbname = Config.get("database","Database")
-  db = create_engine('postgres://scott:tiger@localhost/demodb')
-else:
-  logging.debug('NO database driver has been selected')
-  logging.info('NO database driver has been selected')
+uri = dbDriver + "://" + dbuser + ":" + dbpass + "@" + dbhost + "/" + dbname
+logger.debug('SQLAlchemy URI: ' + uri)
 
+engine = create_engine(uri,encoding=dbenco)
+logger.debug('SQLAlchemy Starting Connection')
+
+try: 
+  connection = engine.connect()
+except SQLAlchemyError:
+  logger.debug('SQLAlchemy failed to connect using URI ' + uri)
+  logger.critical('SQLAlchemy failed to connect to database server')
