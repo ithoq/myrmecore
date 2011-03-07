@@ -1,4 +1,4 @@
-#!/usr/bin/python
+﻿#!/usr/bin/python
 
 # MyrmeCore
 #
@@ -15,17 +15,20 @@
 # basic.py - Basic Data Harvester
 #
 # This is a basic harvester, designed for single gateway environments, connected via serial port and 
-# with direct database access. The configuration of this script must be done directly on basic.ini file.
+# with direct database access. The configuration of this script must be done directly on basic.conf file.
 
 import os
 import ConfigParser
 import logging
+import time
+import serial
+import sqlalchemy
 from sqlalchemy import *
-from sqlalchemy.exceptions import SQLAlchemyError
+from sqlalchemy.exceptions import *
 
-# Read basic.ini configuration file
+# Read basic.conf configuration file
 Config = ConfigParser.ConfigParser()
-Config.read("basic.ini")
+Config.read("basic.conf")
 
 # Create logger
 logLevel = Config.get("main","Level")
@@ -44,8 +47,7 @@ logger.info('Logging Level: ' + logging.getLevelName(int(logLevel)))
 logger.info('Logging Effective Level: ' + str(logEfLevel))
 logger.info('Logging Filename: ' + logPath + "basic_harvester.log")
 
-# Connect to Database
-
+# basic.conf parsing
 dbDriver = Config.get("database","Driver")
 dbhost = Config.get("database","Hostname")
 dbuser = Config.get("database","Username")
@@ -53,14 +55,63 @@ dbpass = Config.get("database","Password")
 dbname = Config.get("database","Database")
 dbenco = Config.get("database","Charset")
 
+ifdev = Config.get("interface","Device")
+ifspeed = Config.get("interface","Speed")
+ifdata = Config.get("interface","DataBits")
+ifpar = Config.get("interface","Parity")
+ifstop = Config.get("interface","StopBit")
+
 uri = dbDriver + "://" + dbuser + ":" + dbpass + "@" + dbhost + "/" + dbname
+logger.debug('SQLAlchemy Version: ' + sqlalchemy.__version__ )
 logger.debug('SQLAlchemy URI: ' + uri)
 
-engine = create_engine(uri,encoding=dbenco)
-logger.debug('SQLAlchemy Starting Connection')
+dbok = "False"
+while (dbok == "False"):
 
-try: 
-  connection = engine.connect()
-except SQLAlchemyError:
-  logger.debug('SQLAlchemy failed to connect using URI ' + uri)
-  logger.critical('SQLAlchemy failed to connect to database server')
+	# Connection attempt
+	try: 
+          engine = create_engine(uri,encoding=dbenco)
+          logger.debug('SQLAlchemy Attempting Connection')
+	  connection = engine.connect()
+	except SQLAlchemyError as exc:
+	  logger.debug('SQLAlchemy failed to connect using URI ' + uri)
+	  logger.critical('Database connection failed')
+	  logger.critical('Error: ' + exc[0])  
+	  raise
+	
+	logging.getLogger('sqlalchemy.connection').setLevel(logging.DEBUG)
+	logger.info('Database connection established')
+	
+	# Check connection status
+	try:
+ 	    logger.debug('SQLAlchemy Connection Test')
+	    result = connection.execute("SELECT NOW()")
+	    for row in result: 
+    	    	logger.debug('SQLAlchemy Test result: ' + str(row))
+ 	    result.close()
+	    logger.debug('SQLAlchemy Test SUCCEEDED ')
+	    dbok = "True"
+	except:
+	    logger.debug('SQLAlchemy Test FAILED ')
+	    raise
+	time.sleep(2)
+
+# __init__(port=None, baudrate=9600, bytesize=EIGHTBITS, parity=PARITY_NONE, stopbits=STOPBITS_ONE, timeout=None, 
+# xonxoff=False, rtscts=False, writeTimeout=None, dsrdtr=False, interCharTimeout=None)
+	
+ifok = "False"
+while (ifok == "False"):
+
+        # Connection attempt
+        try:
+            logger.debug('Opening ' + ifdev + ' port')
+	    # TODO: Concat ifdev, ifspeed, etc... into i
+	    s = serial.Serial(i)
+            available.append( (i, s.portstr)) 
+            s.close()           
+	except serial.SerialException:
+          logger.debug('Failed to open ' + ifdev)
+          logger.critical('Serial interface connection failed')
+          raise
+
+        logger.info('Serial interface connection established')
