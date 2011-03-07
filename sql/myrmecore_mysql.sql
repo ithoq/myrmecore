@@ -30,6 +30,21 @@ CREATE TABLE `alerts` (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for `groups`
+-- ----------------------------
+DROP TABLE IF EXISTS `groups`;
+CREATE TABLE `groups` (
+  `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(30) NOT NULL DEFAULT '',
+  `location` mediumint(6) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
+
+-- ----------------------------
+-- Records of groups
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for `locations`
 -- ----------------------------
 DROP TABLE IF EXISTS `locations`;
@@ -85,12 +100,12 @@ PARTITIONS 8 */;
 -- ----------------------------
 DROP TABLE IF EXISTS `sessions`;
 CREATE TABLE `sessions` (
-  `session_id` varchar(40) DEFAULT '0' NOT NULL,
-  `ip_address` varchar(16) DEFAULT '0' NOT NULL,
+  `session_id` varchar(40) NOT NULL DEFAULT '0',
+  `ip_address` varchar(16) NOT NULL DEFAULT '0',
   `user_agent` varchar(50) NOT NULL,
-  `last_activity` int(10) unsigned DEFAULT 0 NOT NULL,
+  `last_activity` int(10) unsigned NOT NULL DEFAULT '0',
   `user_data` text NOT NULL,
-PRIMARY KEY (`session_id`)
+  PRIMARY KEY (`session_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ROW_FORMAT=FIXED;
 
 -- ----------------------------
