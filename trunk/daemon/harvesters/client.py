@@ -19,8 +19,8 @@
 
 import ConfigParser
 
-# Read client.ini configuration file
+# Read client.conf configuration file
 Config = ConfigParser.ConfigParser()
-Config.read("client.ini")
+Config.read("client.conf")
 
 
