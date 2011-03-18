@@ -1,25 +1,23 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-/**
- * MyrmeCore
- *
- * A Web-based Wireless Sensor Network Management System
- *
- * @package		MyrmeCore
- * @author		Juan F. Duque <jfelipe@grupodyd.com>
- * @copyright	Copyright (c) 2011, Dinamica y Desarrollo Ltda.
- * @license		http://www.myrmecore.com/license/
- * @link		http://www.myrmecore.com
- * @since		Version 0.1
- * @filesource
- */
+
 class Welcome extends CI_Controller {
 
-	function __construct()
-	{
-		parent::__construct();
-	}
-
-	function index()
+	/**
+	 * Index Page for this controller.
+	 *
+	 * Maps to the following URL
+	 * 		http://example.com/index.php/welcome
+	 *	- or -  
+	 * 		http://example.com/index.php/welcome/index
+	 *	- or -
+	 * Since this controller is set as the default controller in 
+	 * config/routes.php, it's displayed at http://example.com/
+	 *
+	 * So any other public methods not prefixed with an underscore will
+	 * map to /index.php/welcome/<method_name>
+	 * @see http://codeigniter.com/user_guide/general/urls.html
+	 */
+	public function index()
 	{
 		$this->load->view('welcome_message');
 	}
