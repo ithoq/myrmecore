@@ -38,24 +38,40 @@
 | the active record class
 */
 
-$active_group = 'default';
+$active_group = 'db_mysql';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'localhost';
-$db['default']['username'] = '';
-$db['default']['password'] = '';
-$db['default']['database'] = '';
-$db['default']['dbdriver'] = 'mysql';
-$db['default']['dbprefix'] = '';
-$db['default']['pconnect'] = TRUE;
-$db['default']['db_debug'] = TRUE;
-$db['default']['cache_on'] = FALSE;
-$db['default']['cachedir'] = '';
-$db['default']['char_set'] = 'utf8';
-$db['default']['dbcollat'] = 'utf8_general_ci';
-$db['default']['swap_pre'] = '';
-$db['default']['autoinit'] = TRUE;
-$db['default']['stricton'] = FALSE;
+$db['db_mysql']['hostname'] = 'localhost';
+$db['db_mysql']['username'] = 'myrmecore';
+$db['db_mysql']['password'] = '';
+$db['db_mysql']['database'] = 'myrmecore';
+$db['db_mysql']['dbdriver'] = 'mysqli';
+$db['db_mysql']['dbprefix'] = '';
+$db['db_mysql']['pconnect'] = TRUE;
+$db['db_mysql']['db_debug'] = TRUE;
+$db['db_mysql']['cache_on'] = FALSE;
+$db['db_mysql']['cachedir'] = '';
+$db['db_mysql']['char_set'] = 'utf8';
+$db['db_mysql']['dbcollat'] = 'utf8_general_ci';
+$db['db_mysql']['swap_pre'] = '';
+$db['db_mysql']['autoinit'] = TRUE;
+$db['db_mysql']['stricton'] = FALSE;
+
+$db['db_postgres']['hostname'] = "localhost";		
+$db['db_postgres']['username'] = "myrmecore";		
+$db['db_postgres']['password'] = "";		
+$db['db_postgres']['database'] = "myrmecore";		
+$db['db_postgres']['dbdriver'] = "postgre";		
+$db['db_postgres']['dbprefix'] = "";		
+$db['db_postgres']['pconnect'] = TRUE;		
+$db['db_postgres']['db_debug'] = TRUE;		
+$db['db_postgres']['cache_on'] = FALSE;		
+$db['db_postgres']['cachedir'] = "";		
+$db['db_postgres']['char_set'] = "utf8";		
+$db['db_postgres']['dbcollat'] = "utf8_general_ci";		
+$db['db_postgres']['swap_pre'] = '';		
+$db['db_postgres']['autoinit'] = TRUE;		
+$db['db_postgres']['stricton'] = FALSE;
 
 
 /* End of file database.php */
