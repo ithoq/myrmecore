@@ -1,20 +1,3 @@
-/*
-Navicat PGSQL Data Transfer
-
-Source Server         : Dev
-Source Server Version : 90103
-Source Host           : localhost:5432
-Source Database       : myrmecore
-Source Schema         : public
-
-Target Server Type    : PGSQL
-Target Server Version : 90103
-File Encoding         : 65001
-
-Date: 2012-05-16 20:18:29
-*/
-
-
 -- ----------------------------
 -- Sequence structure for "public"."api_logs_id_seq"
 -- ----------------------------
@@ -23,7 +6,7 @@ CREATE SEQUENCE "public"."api_logs_id_seq"
  INCREMENT 1
  MINVALUE 1
  MAXVALUE 9223372036854775807
- START 28
+ START 1
  CACHE 1;
 
 -- ----------------------------
@@ -45,7 +28,7 @@ CREATE SEQUENCE "public"."news_id_seq"
  INCREMENT 1
  MINVALUE 1
  MAXVALUE 9223372036854775807
- START 4
+ START 3
  CACHE 1;
 
 -- ----------------------------
@@ -78,7 +61,7 @@ CREATE SEQUENCE "public"."sensor_models_id_seq"
  INCREMENT 1
  MINVALUE 1
  MAXVALUE 9223372036854775807
- START 1
+ START 2
  CACHE 1;
 
 -- ----------------------------
@@ -175,7 +158,6 @@ WITH (OIDS=FALSE)
 -- ----------------------------
 -- Records of api_keys
 -- ----------------------------
-INSERT INTO "public"."api_keys" VALUES ('75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '1', '1', '1337128163');
 
 -- ----------------------------
 -- Table structure for "public"."api_logs"
@@ -198,34 +180,6 @@ WITH (OIDS=FALSE)
 -- ----------------------------
 -- Records of api_logs
 -- ----------------------------
-INSERT INTO "public"."api_logs" VALUES ('1', 'platform/getplatform', 'post', 'a:2:{s:8:"username";s:7:"usuario";s:8:"password";s:8:"12345678";}', '', '192.168.1.115', '1337134013', '0');
-INSERT INTO "public"."api_logs" VALUES ('2', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337134042', '1');
-INSERT INTO "public"."api_logs" VALUES ('3', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337134057', '1');
-INSERT INTO "public"."api_logs" VALUES ('4', 'platform/getplatform/format/xml', 'get', 'a:1:{s:6:"format";s:3:"xml";}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337134064', '1');
-INSERT INTO "public"."api_logs" VALUES ('5', 'platform/getplatform/format/xml', 'get', 'a:1:{s:6:"format";s:3:"xml";}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337134093', '1');
-INSERT INTO "public"."api_logs" VALUES ('6', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337134108', '1');
-INSERT INTO "public"."api_logs" VALUES ('7', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337134275', '1');
-INSERT INTO "public"."api_logs" VALUES ('8', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337134278', '1');
-INSERT INTO "public"."api_logs" VALUES ('9', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337134309', '1');
-INSERT INTO "public"."api_logs" VALUES ('10', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337134608', '1');
-INSERT INTO "public"."api_logs" VALUES ('11', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337134618', '1');
-INSERT INTO "public"."api_logs" VALUES ('12', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337134808', '1');
-INSERT INTO "public"."api_logs" VALUES ('13', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337135194', '1');
-INSERT INTO "public"."api_logs" VALUES ('14', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337135846', '1');
-INSERT INTO "public"."api_logs" VALUES ('15', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136240', '1');
-INSERT INTO "public"."api_logs" VALUES ('16', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136296', '1');
-INSERT INTO "public"."api_logs" VALUES ('17', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136314', '1');
-INSERT INTO "public"."api_logs" VALUES ('18', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136332', '1');
-INSERT INTO "public"."api_logs" VALUES ('19', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136335', '1');
-INSERT INTO "public"."api_logs" VALUES ('20', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136368', '1');
-INSERT INTO "public"."api_logs" VALUES ('21', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136373', '1');
-INSERT INTO "public"."api_logs" VALUES ('22', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136402', '1');
-INSERT INTO "public"."api_logs" VALUES ('23', 'platform/getplatform', 'get', 'a:0:{}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136413', '1');
-INSERT INTO "public"."api_logs" VALUES ('24', 'platform/getplatform/format/xml', 'get', 'a:1:{s:6:"format";s:3:"xml";}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136432', '1');
-INSERT INTO "public"."api_logs" VALUES ('25', 'platform/getplatform/format/xml', 'get', 'a:1:{s:6:"format";s:3:"xml";}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136479', '1');
-INSERT INTO "public"."api_logs" VALUES ('26', 'platform/getplatform/format/xml', 'get', 'a:1:{s:6:"format";s:3:"xml";}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136558', '1');
-INSERT INTO "public"."api_logs" VALUES ('27', 'platform/getplatform/format/xml', 'get', 'a:1:{s:6:"format";s:3:"xml";}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337136583', '1');
-INSERT INTO "public"."api_logs" VALUES ('28', 'platform/getplatform/format/xml', 'get', 'a:1:{s:6:"format";s:3:"xml";}', '75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b', '192.168.1.115', '1337139245', '1');
 
 -- ----------------------------
 -- Table structure for "public"."groups"
@@ -267,9 +221,9 @@ WITH (OIDS=FALSE)
 -- ----------------------------
 -- Records of news
 -- ----------------------------
-INSERT INTO "public"."news" VALUES ('2', '2012-05-15 19:45:19.526117', 'PUBLIC', 'SYSTEM', '0', 'Noticia 1', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
-INSERT INTO "public"."news" VALUES ('3', '2012-05-15 19:45:35.894149', 'PUBLIC', 'SYSTEM', '0', 'Noticia 2', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
-INSERT INTO "public"."news" VALUES ('4', '2012-05-15 19:45:50.630408', 'PUBLIC', 'SYSTEM', '0', 'Noticia 3', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
+INSERT INTO "public"."news" VALUES ('1', '2012-01-01 00:00:00', 'PUBLIC', 'SYSTEM', '0', 'Noticia 1', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
+INSERT INTO "public"."news" VALUES ('2', '2012-01-01 00:00:00', 'PUBLIC', 'SYSTEM', '0', 'Noticia 2', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
+INSERT INTO "public"."news" VALUES ('3', '2012-01-01 00:00:00', 'PUBLIC', 'SYSTEM', '0', 'Noticia 3', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
 
 -- ----------------------------
 -- Table structure for "public"."nodes"
@@ -326,7 +280,8 @@ WITH (OIDS=FALSE)
 -- ----------------------------
 -- Records of sensor_models
 -- ----------------------------
-INSERT INTO "public"."sensor_models" VALUES ('1', 'Primus', 'Basic multi-transductor sensor, with 6 slots and 2xAA batteries');
+INSERT INTO "public"."sensor_models" VALUES ('1', 'Prime', 'Basic multi-transductor sensor, with 6 slots and 2xAA batteries');
+INSERT INTO "public"."sensor_models" VALUES ('2', 'Sentinel', 'Main telecom device, provides GSM connectivity');
 
 -- ----------------------------
 -- Table structure for "public"."sensors"
