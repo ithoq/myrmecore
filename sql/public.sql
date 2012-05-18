@@ -158,6 +158,7 @@ WITH (OIDS=FALSE)
 -- ----------------------------
 -- Records of api_keys
 -- ----------------------------
+INSERT INTO "public"."api_keys" VALUES ('e9b0ceb8d30fe48feb50be38cd5710cafc975bdd', '1', '1', '1337293577');
 
 -- ----------------------------
 -- Table structure for "public"."api_logs"
@@ -263,6 +264,248 @@ WITH (OIDS=FALSE)
 -- ----------------------------
 -- Records of readings
 -- ----------------------------
+INSERT INTO "public"."readings" VALUES ('1', '1', '3', '2012-05-18 18:24:07.031955', '27');
+INSERT INTO "public"."readings" VALUES ('2', '1', '3', '2012-05-18 18:24:22.261039', '28');
+
+-- ----------------------------
+-- Table structure for "public"."readings_april"
+-- ----------------------------
+DROP TABLE "public"."readings_april";
+CREATE TABLE "public"."readings_april" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_april
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for "public"."readings_august"
+-- ----------------------------
+DROP TABLE "public"."readings_august";
+CREATE TABLE "public"."readings_august" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_august
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for "public"."readings_december"
+-- ----------------------------
+DROP TABLE "public"."readings_december";
+CREATE TABLE "public"."readings_december" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_december
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for "public"."readings_february"
+-- ----------------------------
+DROP TABLE "public"."readings_february";
+CREATE TABLE "public"."readings_february" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_february
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for "public"."readings_january"
+-- ----------------------------
+DROP TABLE "public"."readings_january";
+CREATE TABLE "public"."readings_january" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_january
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for "public"."readings_july"
+-- ----------------------------
+DROP TABLE "public"."readings_july";
+CREATE TABLE "public"."readings_july" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_july
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for "public"."readings_june"
+-- ----------------------------
+DROP TABLE "public"."readings_june";
+CREATE TABLE "public"."readings_june" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_june
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for "public"."readings_march"
+-- ----------------------------
+DROP TABLE "public"."readings_march";
+CREATE TABLE "public"."readings_march" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_march
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for "public"."readings_may"
+-- ----------------------------
+DROP TABLE "public"."readings_may";
+CREATE TABLE "public"."readings_may" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_may
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for "public"."readings_november"
+-- ----------------------------
+DROP TABLE "public"."readings_november";
+CREATE TABLE "public"."readings_november" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_november
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for "public"."readings_october"
+-- ----------------------------
+DROP TABLE "public"."readings_october";
+CREATE TABLE "public"."readings_october" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_october
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for "public"."readings_september"
+-- ----------------------------
+DROP TABLE "public"."readings_september";
+CREATE TABLE "public"."readings_september" (
+"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+"sensor_id" int2 DEFAULT 0 NOT NULL,
+"transductor_id" int2 DEFAULT 0 NOT NULL,
+"timestamp" timestamp(6) DEFAULT now() NOT NULL,
+"value" numeric DEFAULT 0 NOT NULL
+)
+INHERITS ("public"."readings") 
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of readings_september
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for "public"."sensor_models"
@@ -327,7 +570,6 @@ WITH (OIDS=FALSE)
 -- ----------------------------
 -- Records of sessions
 -- ----------------------------
-INSERT INTO "public"."sessions" VALUES ('df68759a10ea4265ac84250e54c99a39', '192.168.1.115', 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19', '1337139245', 'a:9:{s:9:"user_data";s:0:"";s:2:"ID";s:1:"1";s:4:"Name";s:7:"Usuario";s:5:"Login";s:7:"usuario";s:5:"Email";s:17:"usuario@localhost";s:4:"Role";s:4:"USER";s:5:"Phone";s:13:"+573014457549";s:3:"Key";s:40:"75e287feb97e2dcf8eab1edb29f33abdb2f5bc9b";s:11:"Preferences";s:59:"{"lastRole":"USER","currentRole":"USER","language":"es_CO"}";}');
 
 -- ----------------------------
 -- Table structure for "public"."settings"
@@ -484,19 +726,6 @@ INSERT INTO "public"."zones" VALUES ('2', 'TEST_ZONE_2', 't');
 -- ----------------------------
 -- Alter Sequences Owned By 
 -- ----------------------------
-ALTER SEQUENCE "public"."api_logs_id_seq" OWNED BY "api_logs"."id";
-ALTER SEQUENCE "public"."groups_id_seq" OWNED BY "groups"."id";
-ALTER SEQUENCE "public"."news_id_seq" OWNED BY "news"."id";
-ALTER SEQUENCE "public"."nodes_id_seq" OWNED BY "nodes"."id";
-ALTER SEQUENCE "public"."readings_id_seq" OWNED BY "readings"."id";
-ALTER SEQUENCE "public"."sensor_models_id_seq" OWNED BY "sensor_models"."id";
-ALTER SEQUENCE "public"."sensors_id_seq" OWNED BY "sensors"."id";
-ALTER SEQUENCE "public"."settings_id_seq" OWNED BY "settings"."id";
-ALTER SEQUENCE "public"."strings_id_seq" OWNED BY "strings"."id";
-ALTER SEQUENCE "public"."transductor_types_id_seq" OWNED BY "transductor_types"."id";
-ALTER SEQUENCE "public"."transductors_id_seq" OWNED BY "transductors"."id";
-ALTER SEQUENCE "public"."users_id_seq" OWNED BY "users"."id";
-ALTER SEQUENCE "public"."zones_id_seq" OWNED BY "zones"."id";
 
 -- ----------------------------
 -- Primary Key structure for table "public"."api_keys"
@@ -532,9 +761,16 @@ ALTER TABLE "public"."nodes" ADD PRIMARY KEY ("id");
 -- ----------------------------
 -- Indexes structure for table readings
 -- ----------------------------
-CREATE INDEX "sensor_id_idx" ON "public"."readings" USING btree ("sensor_id");
-CREATE INDEX "timestamp_idx" ON "public"."readings" USING btree ("timestamp");
-CREATE INDEX "transductor_id_idx" ON "public"."readings" USING btree ("transductor_id");
+CREATE INDEX "sensor_id_idx_copy" ON "public"."readings" USING btree ("sensor_id");
+CREATE INDEX "timestamp_idx_copy" ON "public"."readings" USING btree ("timestamp");
+CREATE INDEX "transductor_id_idx_copy" ON "public"."readings" USING btree ("transductor_id");
+
+-- ----------------------------
+-- Triggers structure for table "public"."readings"
+-- ----------------------------
+CREATE TRIGGER "insert_readings_trigger" BEFORE INSERT ON "public"."readings"
+FOR EACH ROW
+EXECUTE PROCEDURE "readings_insert_trigger"();
 
 -- ----------------------------
 -- Primary Key structure for table "public"."readings"
@@ -599,6 +835,11 @@ CREATE INDEX "role_idx" ON "public"."users" USING btree ("role");
 ALTER TABLE "public"."users" ADD PRIMARY KEY ("id");
 
 -- ----------------------------
+-- Indexes structure for table zones
+-- ----------------------------
+CREATE INDEX "zone_enabled_idx" ON "public"."zones" USING btree ("enabled");
+
+-- ----------------------------
 -- Primary Key structure for table "public"."zones"
 -- ----------------------------
 ALTER TABLE "public"."zones" ADD PRIMARY KEY ("id");
@@ -622,8 +863,8 @@ ALTER TABLE "public"."readings" ADD FOREIGN KEY ("transductor_id") REFERENCES "p
 -- ----------------------------
 -- Foreign Key structure for table "public"."sensors"
 -- ----------------------------
-ALTER TABLE "public"."sensors" ADD FOREIGN KEY ("model") REFERENCES "public"."sensor_models" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 ALTER TABLE "public"."sensors" ADD FOREIGN KEY ("group") REFERENCES "public"."groups" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+ALTER TABLE "public"."sensors" ADD FOREIGN KEY ("model") REFERENCES "public"."sensor_models" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- ----------------------------
 -- Foreign Key structure for table "public"."transductors"
