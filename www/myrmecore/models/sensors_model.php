@@ -32,5 +32,25 @@ class Sensors_model extends CI_Model {
 		}				
 		return $result;		
 	}
+    
+    function getSensor($sensor_id)
+    {
+        $result = array();
+        $query = $this->db->get_where('sensors', array('id' => $sensor_id));
+        if ($query->num_rows() > 0) {
+            $sensor = $query->row_array(); 
+            $result['result'] = 'SUCCESS';
+            $result['sensor'] = $sensor;
+            $this->load->model('Sensor_models_model', '', TRUE);
+            $this->load->model('Transductors_model', '', TRUE);
+            $sensor_model_id = $result['sensor']['model'];
+            $result['sensor']['model'] = $this->Sensor_models_model->getSensorModel($sensor_model_id);
+            $result['sensor']['transductors'] = $this->Transductors_model->getTransductors($sensor['id']);
+        } else {
+            $result['result'] = 'FAILED';
+            $result['cause'] = 'SENSOR_NOT_FOUND';
+        }    
+        return $result;            
+    }
 
 }
