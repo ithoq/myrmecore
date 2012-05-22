@@ -1,873 +1,1828 @@
--- ----------------------------
--- Sequence structure for "public"."api_logs_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."api_logs_id_seq";
-CREATE SEQUENCE "public"."api_logs_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 1
- CACHE 1;
+--
+-- PostgreSQL database dump
+--
 
--- ----------------------------
--- Sequence structure for "public"."groups_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."groups_id_seq";
-CREATE SEQUENCE "public"."groups_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 3
- CACHE 1;
+SET statement_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
 
--- ----------------------------
--- Sequence structure for "public"."news_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."news_id_seq";
-CREATE SEQUENCE "public"."news_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 3
- CACHE 1;
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
 
--- ----------------------------
--- Sequence structure for "public"."nodes_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."nodes_id_seq";
-CREATE SEQUENCE "public"."nodes_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 2
- CACHE 1;
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
--- ----------------------------
--- Sequence structure for "public"."readings_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."readings_id_seq";
-CREATE SEQUENCE "public"."readings_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 1
- CACHE 1;
 
--- ----------------------------
--- Sequence structure for "public"."sensor_models_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."sensor_models_id_seq";
-CREATE SEQUENCE "public"."sensor_models_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 2
- CACHE 1;
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
 
--- ----------------------------
--- Sequence structure for "public"."sensors_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."sensors_id_seq";
-CREATE SEQUENCE "public"."sensors_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 6
- CACHE 1;
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
--- ----------------------------
--- Sequence structure for "public"."settings_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."settings_id_seq";
-CREATE SEQUENCE "public"."settings_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 6
- CACHE 1;
 
--- ----------------------------
--- Sequence structure for "public"."strings_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."strings_id_seq";
-CREATE SEQUENCE "public"."strings_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 6
- CACHE 1;
+SET search_path = public, pg_catalog;
 
--- ----------------------------
--- Sequence structure for "public"."transductor_types_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."transductor_types_id_seq";
-CREATE SEQUENCE "public"."transductor_types_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 4
- CACHE 1;
+--
+-- Name: readings_insert_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
+--
 
--- ----------------------------
--- Sequence structure for "public"."transductors_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."transductors_id_seq";
-CREATE SEQUENCE "public"."transductors_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 19
- CACHE 1;
+CREATE FUNCTION readings_insert_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+current_month INTEGER;
+BEGIN
+current_month := date_part('month', NEW.timestamp);
+    IF current_month = 1 THEN
+        INSERT INTO readings_january VALUES (NEW.*);
+    ELSIF current_month = 2 THEN
+        INSERT INTO readings_february VALUES (NEW.*);
+    ELSIF current_month = 3 THEN
+				INSERT INTO readings_march VALUES (NEW.*);
+    ELSIF current_month = 4 THEN
+        INSERT INTO readings_april VALUES (NEW.*);
+    ELSIF current_month = 5 THEN
+				INSERT INTO readings_may VALUES (NEW.*);
+    ELSIF current_month = 6 THEN
+        INSERT INTO readings_june VALUES (NEW.*);
+    ELSIF current_month = 7 THEN
+				INSERT INTO readings_july VALUES (NEW.*);
+    ELSIF current_month = 8 THEN
+        INSERT INTO readings_august VALUES (NEW.*);
+    ELSIF current_month = 9 THEN
+				INSERT INTO readings_september VALUES (NEW.*);
+    ELSIF current_month = 10 THEN
+        INSERT INTO readings_october VALUES (NEW.*);
+    ELSIF current_month = 11 THEN
+				INSERT INTO readings_november VALUES (NEW.*);
+    ELSIF current_month = 12 THEN
+        INSERT INTO readings_december VALUES (NEW.*);
+    ELSE
+        RAISE EXCEPTION 'Date out of range.';
+    END IF;
+    RETURN NULL;
+END;
+$$;
 
--- ----------------------------
--- Sequence structure for "public"."users_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."users_id_seq";
-CREATE SEQUENCE "public"."users_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 1
- CACHE 1;
 
--- ----------------------------
--- Sequence structure for "public"."zones_id_seq"
--- ----------------------------
-DROP SEQUENCE "public"."zones_id_seq";
-CREATE SEQUENCE "public"."zones_id_seq"
- INCREMENT 1
- MINVALUE 1
- MAXVALUE 9223372036854775807
- START 2
- CACHE 1;
+ALTER FUNCTION public.readings_insert_trigger() OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."api_keys"
--- ----------------------------
-DROP TABLE "public"."api_keys";
-CREATE TABLE "public"."api_keys" (
-"key" varchar(40) DEFAULT ''::character varying NOT NULL,
-"level" int2 DEFAULT 0 NOT NULL,
-"ignore_limits" int2 DEFAULT 0 NOT NULL,
-"date_created" int4 DEFAULT 0 NOT NULL
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: action_sets; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE action_sets (
+    id integer NOT NULL,
+    name character varying DEFAULT ''::character varying NOT NULL
+);
+
+
+ALTER TABLE public.action_sets OWNER TO postgres;
+
+--
+-- Name: action_sets_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE action_sets_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.action_sets_id_seq OWNER TO postgres;
+
+--
+-- Name: action_sets_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE action_sets_id_seq OWNED BY action_sets.id;
+
+
+--
+-- Name: actions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE actions (
+    id integer NOT NULL,
+    action character varying(32) DEFAULT ''::character varying NOT NULL,
+    args character varying NOT NULL,
+    set integer DEFAULT 0 NOT NULL,
+    name character varying DEFAULT ''::character varying NOT NULL,
+    enabled boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.actions OWNER TO postgres;
+
+--
+-- Name: actions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE actions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.actions_id_seq OWNER TO postgres;
+
+--
+-- Name: actions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE actions_id_seq OWNED BY actions.id;
+
+
+--
+-- Name: api_keys; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE api_keys (
+    key character varying(40) DEFAULT ''::character varying NOT NULL,
+    level smallint DEFAULT 0 NOT NULL,
+    ignore_limits smallint DEFAULT 0 NOT NULL,
+    date_created integer DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.api_keys OWNER TO postgres;
+
+--
+-- Name: api_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE api_logs_id_seq
+    START WITH 113
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.api_logs_id_seq OWNER TO postgres;
+
+--
+-- Name: api_logs; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE api_logs (
+    id integer DEFAULT nextval('api_logs_id_seq'::regclass) NOT NULL,
+    uri character varying(255) DEFAULT ''::character varying NOT NULL,
+    method character varying(255) DEFAULT ''::character varying NOT NULL,
+    params text NOT NULL,
+    api_key character varying(40) DEFAULT ''::character varying NOT NULL,
+    ip_address inet NOT NULL,
+    "time" integer DEFAULT 0 NOT NULL,
+    authorized smallint DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.api_logs OWNER TO postgres;
+
+--
+-- Name: event_classes; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE event_classes (
+    id integer NOT NULL,
+    transductor_class integer DEFAULT 0 NOT NULL,
+    relation character varying DEFAULT ''::character varying NOT NULL,
+    value numeric DEFAULT 0 NOT NULL,
+    name character varying(255) DEFAULT ''::character varying NOT NULL,
+    action_set integer DEFAULT 0 NOT NULL,
+    enabled boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.event_classes OWNER TO postgres;
+
+--
+-- Name: event_classes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE event_classes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.event_classes_id_seq OWNER TO postgres;
+
+--
+-- Name: event_classes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE event_classes_id_seq OWNED BY event_classes.id;
+
+
+--
+-- Name: events; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE events (
+    id integer NOT NULL,
+    reading bigint DEFAULT 0 NOT NULL,
+    class integer DEFAULT 0 NOT NULL,
+    action_set smallint DEFAULT 0 NOT NULL,
+    "timestamp" timestamp without time zone DEFAULT now() NOT NULL,
+    cleared boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.events OWNER TO postgres;
+
+--
+-- Name: events_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE events_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.events_id_seq OWNER TO postgres;
+
+--
+-- Name: events_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE events_id_seq OWNED BY events.id;
+
+
+--
+-- Name: groups_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE groups_id_seq
+    START WITH 3
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.groups_id_seq OWNER TO postgres;
+
+--
+-- Name: groups; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE groups (
+    id integer DEFAULT nextval('groups_id_seq'::regclass) NOT NULL,
+    name character varying DEFAULT ''::character varying NOT NULL,
+    node integer NOT NULL,
+    enabled boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.groups OWNER TO postgres;
+
+--
+-- Name: news_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE news_id_seq
+    START WITH 3
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.news_id_seq OWNER TO postgres;
+
+--
+-- Name: news; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE news (
+    id integer DEFAULT nextval('news_id_seq'::regclass) NOT NULL,
+    date timestamp(6) without time zone DEFAULT now() NOT NULL,
+    role character varying(8) DEFAULT 'PUBLIC'::character varying NOT NULL,
+    reach character varying(8) DEFAULT 'SYSTEM'::character varying NOT NULL,
+    reach_id smallint DEFAULT 0 NOT NULL,
+    title character varying(100) NOT NULL,
+    content text NOT NULL
+);
+
+
+ALTER TABLE public.news OWNER TO postgres;
+
+--
+-- Name: nodes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE nodes_id_seq
+    START WITH 2
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.nodes_id_seq OWNER TO postgres;
+
+--
+-- Name: nodes; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE nodes (
+    id integer DEFAULT nextval('nodes_id_seq'::regclass) NOT NULL,
+    name character varying DEFAULT ''::character varying NOT NULL,
+    zone integer DEFAULT 0 NOT NULL,
+    enabled boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.nodes OWNER TO postgres;
+
+--
+-- Name: readings_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE readings_id_seq
+    START WITH 100019
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.readings_id_seq OWNER TO postgres;
+
+--
+-- Name: readings; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
+    sensor_id smallint DEFAULT 0 NOT NULL,
+    transductor_id smallint DEFAULT 0 NOT NULL,
+    "timestamp" timestamp(6) without time zone DEFAULT now() NOT NULL,
+    value numeric DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.readings OWNER TO postgres;
+
+--
+-- Name: readings_april; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_april (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-WITH (OIDS=FALSE)
+INHERITS (readings);
 
-;
 
--- ----------------------------
--- Records of api_keys
--- ----------------------------
-INSERT INTO "public"."api_keys" VALUES ('e9b0ceb8d30fe48feb50be38cd5710cafc975bdd', '1', '1', '1337293577');
+ALTER TABLE public.readings_april OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."api_logs"
--- ----------------------------
-DROP TABLE "public"."api_logs";
-CREATE TABLE "public"."api_logs" (
-"id" int4 DEFAULT nextval('api_logs_id_seq'::regclass) NOT NULL,
-"uri" varchar(255) DEFAULT ''::character varying NOT NULL,
-"method" varchar(255) DEFAULT ''::character varying NOT NULL,
-"params" text NOT NULL,
-"api_key" varchar(40) DEFAULT ''::character varying NOT NULL,
-"ip_address" inet NOT NULL,
-"time" int4 DEFAULT 0 NOT NULL,
-"authorized" int2 DEFAULT 0 NOT NULL
+--
+-- Name: readings_august; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_august (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-WITH (OIDS=FALSE)
+INHERITS (readings);
 
-;
 
--- ----------------------------
--- Records of api_logs
--- ----------------------------
+ALTER TABLE public.readings_august OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."groups"
--- ----------------------------
-DROP TABLE "public"."groups";
-CREATE TABLE "public"."groups" (
-"id" int4 DEFAULT nextval('groups_id_seq'::regclass) NOT NULL,
-"name" varchar DEFAULT ''::character varying NOT NULL,
-"node" int4 NOT NULL,
-"enabled" bool DEFAULT true NOT NULL
+--
+-- Name: readings_december; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_december (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-WITH (OIDS=FALSE)
+INHERITS (readings);
 
-;
 
--- ----------------------------
--- Records of groups
--- ----------------------------
-INSERT INTO "public"."groups" VALUES ('1', 'TEST_GROUP_1', '1', 't');
-INSERT INTO "public"."groups" VALUES ('2', 'TEST_GROUP_2', '2', 't');
+ALTER TABLE public.readings_december OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."news"
--- ----------------------------
-DROP TABLE "public"."news";
-CREATE TABLE "public"."news" (
-"id" int4 DEFAULT nextval('news_id_seq'::regclass) NOT NULL,
-"date" timestamp(6) DEFAULT now() NOT NULL,
-"role" varchar(8) DEFAULT 'PUBLIC'::character varying NOT NULL,
-"reach" varchar(8) DEFAULT 'SYSTEM'::character varying NOT NULL,
-"reach_id" int2 DEFAULT 0 NOT NULL,
-"title" varchar(100) NOT NULL,
-"content" text NOT NULL
+--
+-- Name: readings_february; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_february (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-WITH (OIDS=FALSE)
+INHERITS (readings);
 
-;
 
--- ----------------------------
--- Records of news
--- ----------------------------
-INSERT INTO "public"."news" VALUES ('1', '2012-01-01 00:00:00', 'PUBLIC', 'SYSTEM', '0', 'Noticia 1', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
-INSERT INTO "public"."news" VALUES ('2', '2012-01-01 00:00:00', 'PUBLIC', 'SYSTEM', '0', 'Noticia 2', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
-INSERT INTO "public"."news" VALUES ('3', '2012-01-01 00:00:00', 'PUBLIC', 'SYSTEM', '0', 'Noticia 3', 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
+ALTER TABLE public.readings_february OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."nodes"
--- ----------------------------
-DROP TABLE "public"."nodes";
-CREATE TABLE "public"."nodes" (
-"id" int4 DEFAULT nextval('nodes_id_seq'::regclass) NOT NULL,
-"name" varchar DEFAULT ''::character varying NOT NULL,
-"zone" int4 DEFAULT 0 NOT NULL,
-"enabled" bool DEFAULT true NOT NULL
+--
+-- Name: readings_january; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_january (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-WITH (OIDS=FALSE)
+INHERITS (readings);
 
-;
 
--- ----------------------------
--- Records of nodes
--- ----------------------------
-INSERT INTO "public"."nodes" VALUES ('1', 'TEST_NODE_1', '1', 't');
-INSERT INTO "public"."nodes" VALUES ('2', 'TEST_NODE_2', '2', 't');
+ALTER TABLE public.readings_january OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."readings"
--- ----------------------------
-DROP TABLE "public"."readings";
-CREATE TABLE "public"."readings" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
+--
+-- Name: readings_july; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_july (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-WITH (OIDS=FALSE)
+INHERITS (readings);
 
-;
 
--- ----------------------------
--- Records of readings
--- ----------------------------
-INSERT INTO "public"."readings" VALUES ('1', '1', '3', '2012-05-18 18:24:07.031955', '27');
-INSERT INTO "public"."readings" VALUES ('2', '1', '3', '2012-05-18 18:24:22.261039', '28');
+ALTER TABLE public.readings_july OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."readings_april"
--- ----------------------------
-DROP TABLE "public"."readings_april";
-CREATE TABLE "public"."readings_april" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
+--
+-- Name: readings_june; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_june (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
+INHERITS (readings);
 
-;
 
--- ----------------------------
--- Records of readings_april
--- ----------------------------
+ALTER TABLE public.readings_june OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."readings_august"
--- ----------------------------
-DROP TABLE "public"."readings_august";
-CREATE TABLE "public"."readings_august" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
+--
+-- Name: readings_march; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_march (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
+INHERITS (readings);
 
-;
 
--- ----------------------------
--- Records of readings_august
--- ----------------------------
+ALTER TABLE public.readings_march OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."readings_december"
--- ----------------------------
-DROP TABLE "public"."readings_december";
-CREATE TABLE "public"."readings_december" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
+--
+-- Name: readings_may; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_may (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
+INHERITS (readings);
 
-;
 
--- ----------------------------
--- Records of readings_december
--- ----------------------------
+ALTER TABLE public.readings_may OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."readings_february"
--- ----------------------------
-DROP TABLE "public"."readings_february";
-CREATE TABLE "public"."readings_february" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
+--
+-- Name: readings_november; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_november (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
+INHERITS (readings);
 
-;
 
--- ----------------------------
--- Records of readings_february
--- ----------------------------
+ALTER TABLE public.readings_november OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."readings_january"
--- ----------------------------
-DROP TABLE "public"."readings_january";
-CREATE TABLE "public"."readings_january" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
+--
+-- Name: readings_october; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_october (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
+INHERITS (readings);
 
-;
 
--- ----------------------------
--- Records of readings_january
--- ----------------------------
+ALTER TABLE public.readings_october OWNER TO postgres;
 
--- ----------------------------
--- Table structure for "public"."readings_july"
--- ----------------------------
-DROP TABLE "public"."readings_july";
-CREATE TABLE "public"."readings_july" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
+--
+-- Name: readings_september; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE readings_september (
+    id bigint DEFAULT nextval('readings_id_seq'::regclass),
+    sensor_id smallint DEFAULT 0,
+    transductor_id smallint DEFAULT 0,
+    "timestamp" timestamp(6) without time zone DEFAULT now(),
+    value numeric DEFAULT 0
 )
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of readings_july
--- ----------------------------
-
--- ----------------------------
--- Table structure for "public"."readings_june"
--- ----------------------------
-DROP TABLE "public"."readings_june";
-CREATE TABLE "public"."readings_june" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
-)
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of readings_june
--- ----------------------------
-
--- ----------------------------
--- Table structure for "public"."readings_march"
--- ----------------------------
-DROP TABLE "public"."readings_march";
-CREATE TABLE "public"."readings_march" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
-)
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of readings_march
--- ----------------------------
-
--- ----------------------------
--- Table structure for "public"."readings_may"
--- ----------------------------
-DROP TABLE "public"."readings_may";
-CREATE TABLE "public"."readings_may" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
-)
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of readings_may
--- ----------------------------
-
--- ----------------------------
--- Table structure for "public"."readings_november"
--- ----------------------------
-DROP TABLE "public"."readings_november";
-CREATE TABLE "public"."readings_november" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
-)
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of readings_november
--- ----------------------------
-
--- ----------------------------
--- Table structure for "public"."readings_october"
--- ----------------------------
-DROP TABLE "public"."readings_october";
-CREATE TABLE "public"."readings_october" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
-)
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of readings_october
--- ----------------------------
-
--- ----------------------------
--- Table structure for "public"."readings_september"
--- ----------------------------
-DROP TABLE "public"."readings_september";
-CREATE TABLE "public"."readings_september" (
-"id" int8 DEFAULT nextval('readings_id_seq'::regclass) NOT NULL,
-"sensor_id" int2 DEFAULT 0 NOT NULL,
-"transductor_id" int2 DEFAULT 0 NOT NULL,
-"timestamp" timestamp(6) DEFAULT now() NOT NULL,
-"value" numeric DEFAULT 0 NOT NULL
-)
-INHERITS ("public"."readings") 
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of readings_september
--- ----------------------------
-
--- ----------------------------
--- Table structure for "public"."sensor_models"
--- ----------------------------
-DROP TABLE "public"."sensor_models";
-CREATE TABLE "public"."sensor_models" (
-"id" int4 DEFAULT nextval('sensor_models_id_seq'::regclass) NOT NULL,
-"name" varchar(100) DEFAULT ''::character varying NOT NULL,
-"details" text NOT NULL
-)
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of sensor_models
--- ----------------------------
-INSERT INTO "public"."sensor_models" VALUES ('1', 'Prime', 'Basic multi-transductor sensor, with 6 slots and 2xAA batteries');
-INSERT INTO "public"."sensor_models" VALUES ('2', 'Sentinel', 'Main telecom device, provides GSM connectivity');
-
--- ----------------------------
--- Table structure for "public"."sensors"
--- ----------------------------
-DROP TABLE "public"."sensors";
-CREATE TABLE "public"."sensors" (
-"id" int4 DEFAULT nextval('sensors_id_seq'::regclass) NOT NULL,
-"name" varchar(100) DEFAULT ''::character varying NOT NULL,
-"hwaddress" varchar(16) DEFAULT ''::character varying NOT NULL,
-"model" int4 DEFAULT 0 NOT NULL,
-"group" int4 NOT NULL,
-"enabled" bool DEFAULT true NOT NULL
-)
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of sensors
--- ----------------------------
-INSERT INTO "public"."sensors" VALUES ('1', 'TEST_SENSOR_1', '00:00:01', '1', '1', 't');
-INSERT INTO "public"."sensors" VALUES ('2', 'TEST_SENSOR_2', '00:00:02', '1', '1', 't');
-INSERT INTO "public"."sensors" VALUES ('3', 'TEST_SENSOR_3', '00:00:03', '1', '1', 't');
-INSERT INTO "public"."sensors" VALUES ('4', 'TEST_SENSOR_4', '00:00:04', '1', '2', 't');
-INSERT INTO "public"."sensors" VALUES ('5', 'TEST_SENSOR_5', '00:00:05', '1', '2', 't');
-INSERT INTO "public"."sensors" VALUES ('6', 'TEST_SENSOR_6', '00:00:06', '1', '2', 't');
-
--- ----------------------------
--- Table structure for "public"."sessions"
--- ----------------------------
-DROP TABLE "public"."sessions";
-CREATE TABLE "public"."sessions" (
-"session_id" varchar(40) DEFAULT 0 NOT NULL,
-"ip_address" varchar(16) DEFAULT 0 NOT NULL,
-"user_agent" varchar(255) NOT NULL,
-"last_activity" int4 DEFAULT 0 NOT NULL,
-"user_data" text NOT NULL
-)
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of sessions
--- ----------------------------
-
--- ----------------------------
--- Table structure for "public"."settings"
--- ----------------------------
-DROP TABLE "public"."settings";
-CREATE TABLE "public"."settings" (
-"id" int4 DEFAULT nextval('settings_id_seq'::regclass) NOT NULL,
-"visible" bool DEFAULT true NOT NULL,
-"name" varchar(20) DEFAULT ''::character varying NOT NULL,
-"value" varchar(20) DEFAULT ''::character varying NOT NULL
-)
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of settings
--- ----------------------------
-INSERT INTO "public"."settings" VALUES ('1', 't', 'title', 'MyrmeCore Dev');
-INSERT INTO "public"."settings" VALUES ('2', 't', 'default_language', 'es_CO');
-INSERT INTO "public"."settings" VALUES ('3', 't', 'auth_mode', 'DB');
-INSERT INTO "public"."settings" VALUES ('4', 'f', 'hash_loops', '3');
-INSERT INTO "public"."settings" VALUES ('5', 'f', 'salt_size', '4');
-INSERT INTO "public"."settings" VALUES ('6', 't', 'number_news', '3');
-
--- ----------------------------
--- Table structure for "public"."strings"
--- ----------------------------
-DROP TABLE "public"."strings";
-CREATE TABLE "public"."strings" (
-"id" int4 DEFAULT nextval('strings_id_seq'::regclass) NOT NULL,
-"lang" varchar(8) DEFAULT ''::character varying NOT NULL,
-"name" varchar(50) DEFAULT ''::character varying NOT NULL,
-"text" varchar(100) DEFAULT NULL::character varying NOT NULL
-)
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of strings
--- ----------------------------
-INSERT INTO "public"."strings" VALUES ('1', 'es_CO', 'empty_username', 'No ha especificado un nombre de usuario');
-INSERT INTO "public"."strings" VALUES ('2', 'es_CO', 'empty_password', 'No ha especificado una contraseña');
-INSERT INTO "public"."strings" VALUES ('3', 'es_CO', 'wrong_username', 'Nombre de usuario incorrecto');
-INSERT INTO "public"."strings" VALUES ('4', 'es_CO', 'wrong_password', 'Contraseña incorrecta');
-INSERT INTO "public"."strings" VALUES ('5', 'es_CO', 'already_authenticated', 'Usted ya está autenticado');
-INSERT INTO "public"."strings" VALUES ('6', 'es_CO', 'authentication_required', 'Se requiere autenticación');
-
--- ----------------------------
--- Table structure for "public"."transductor_types"
--- ----------------------------
-DROP TABLE "public"."transductor_types";
-CREATE TABLE "public"."transductor_types" (
-"id" int4 DEFAULT nextval('transductor_types_id_seq'::regclass) NOT NULL,
-"name" varchar(50) DEFAULT ''::character varying NOT NULL,
-"size_bytes" int2 DEFAULT 1 NOT NULL,
-"conversion" varchar(100) DEFAULT '(X)'::character varying NOT NULL,
-"units" varchar(25) DEFAULT ''::character varying NOT NULL,
-"details" text NOT NULL,
-"picture" bytea
-)
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of transductor_types
--- ----------------------------
-INSERT INTO "public"."transductor_types" VALUES ('1', 'Batt Level', '2', '(X)', 'mV', 'Digi XBee S2C', null);
-INSERT INTO "public"."transductor_types" VALUES ('2', 'Batt Level', '2', '(X * 1200 / 1024)', 'mV', 'Digi XBee S2 (through hole)', null);
-INSERT INTO "public"."transductor_types" VALUES ('3', 'High Precision Temperature', '2', '(175.72 * X / 65536 - 46.85)', '°C', 'SHT21 Humidity and Temperature Sensor (Temp: 14 bits, Hum: 12bits)', null);
-INSERT INTO "public"."transductor_types" VALUES ('4', 'High Precision Humidity', '2', '(125.00 * X / 65536 - 6)', '%', 'SHT21 Humidity and Temperature Sensor (Temp: 14 bits, Hum: 12bits)', null);
-
--- ----------------------------
--- Table structure for "public"."transductors"
--- ----------------------------
-DROP TABLE "public"."transductors";
-CREATE TABLE "public"."transductors" (
-"id" int4 DEFAULT nextval('transductors_id_seq'::regclass) NOT NULL,
-"type" int4 DEFAULT 0 NOT NULL,
-"sensor" int4 DEFAULT 0 NOT NULL
-)
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of transductors
--- ----------------------------
-INSERT INTO "public"."transductors" VALUES ('1', '2', '1');
-INSERT INTO "public"."transductors" VALUES ('2', '3', '1');
-INSERT INTO "public"."transductors" VALUES ('3', '4', '1');
-INSERT INTO "public"."transductors" VALUES ('4', '2', '2');
-INSERT INTO "public"."transductors" VALUES ('5', '3', '2');
-INSERT INTO "public"."transductors" VALUES ('6', '4', '2');
-INSERT INTO "public"."transductors" VALUES ('7', '2', '3');
-INSERT INTO "public"."transductors" VALUES ('8', '3', '3');
-INSERT INTO "public"."transductors" VALUES ('9', '4', '3');
-INSERT INTO "public"."transductors" VALUES ('10', '2', '4');
-INSERT INTO "public"."transductors" VALUES ('11', '3', '4');
-INSERT INTO "public"."transductors" VALUES ('12', '4', '4');
-INSERT INTO "public"."transductors" VALUES ('13', '2', '5');
-INSERT INTO "public"."transductors" VALUES ('14', '3', '5');
-INSERT INTO "public"."transductors" VALUES ('15', '4', '5');
-INSERT INTO "public"."transductors" VALUES ('16', '2', '6');
-INSERT INTO "public"."transductors" VALUES ('17', '3', '6');
-INSERT INTO "public"."transductors" VALUES ('18', '4', '6');
-
--- ----------------------------
--- Table structure for "public"."users"
--- ----------------------------
-DROP TABLE "public"."users";
-CREATE TABLE "public"."users" (
-"id" int4 DEFAULT nextval('users_id_seq'::regclass) NOT NULL,
-"name" varchar(100) NOT NULL,
-"login" varchar(10) NOT NULL,
-"email" varchar(100) NOT NULL,
-"salt" varchar(8) NOT NULL,
-"hash" varchar(128) NOT NULL,
-"role" varchar(10) NOT NULL,
-"phone" varchar(20) DEFAULT ''::character varying NOT NULL,
-"preferences" text DEFAULT ''::character varying NOT NULL,
-"enabled" bool DEFAULT true NOT NULL
-)
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of users
--- ----------------------------
-INSERT INTO "public"."users" VALUES ('1', 'Usuario', 'usuario', 'usuario@localhost', 'd1u8', '46bab3ac3823c6464b654c1a3eae38a38d2e0f677e3d5297345dbdd8d631c651798a6a853af27e264b7dd6fa45ffb3999d96e2b29c95f7c5baa14df394c2bdd6', 'USER', '+573014457549', '{"lastRole":"USER","currentRole":"USER","language":"es_CO"}', 't');
-
--- ----------------------------
--- Table structure for "public"."zones"
--- ----------------------------
-DROP TABLE "public"."zones";
-CREATE TABLE "public"."zones" (
-"id" int4 DEFAULT nextval('zones_id_seq'::regclass) NOT NULL,
-"name" varchar(50) DEFAULT ''::character varying NOT NULL,
-"enabled" bool DEFAULT true NOT NULL
-)
-WITH (OIDS=FALSE)
-
-;
-
--- ----------------------------
--- Records of zones
--- ----------------------------
-INSERT INTO "public"."zones" VALUES ('1', 'TEST_ZONE_1', 't');
-INSERT INTO "public"."zones" VALUES ('2', 'TEST_ZONE_2', 't');
-
--- ----------------------------
--- Alter Sequences Owned By 
--- ----------------------------
-
--- ----------------------------
--- Primary Key structure for table "public"."api_keys"
--- ----------------------------
-ALTER TABLE "public"."api_keys" ADD PRIMARY KEY ("key");
-
--- ----------------------------
--- Primary Key structure for table "public"."api_logs"
--- ----------------------------
-ALTER TABLE "public"."api_logs" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Primary Key structure for table "public"."groups"
--- ----------------------------
-ALTER TABLE "public"."groups" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Indexes structure for table news
--- ----------------------------
-CREATE INDEX "date_idx" ON "public"."news" USING btree ("date");
-CREATE INDEX "reach_idx" ON "public"."news" USING btree ("reach", "reach_id");
-
--- ----------------------------
--- Primary Key structure for table "public"."news"
--- ----------------------------
-ALTER TABLE "public"."news" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Primary Key structure for table "public"."nodes"
--- ----------------------------
-ALTER TABLE "public"."nodes" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Indexes structure for table readings
--- ----------------------------
-CREATE INDEX "sensor_id_idx_copy" ON "public"."readings" USING btree ("sensor_id");
-CREATE INDEX "timestamp_idx_copy" ON "public"."readings" USING btree ("timestamp");
-CREATE INDEX "transductor_id_idx_copy" ON "public"."readings" USING btree ("transductor_id");
-
--- ----------------------------
--- Triggers structure for table "public"."readings"
--- ----------------------------
-CREATE TRIGGER "insert_readings_trigger" BEFORE INSERT ON "public"."readings"
-FOR EACH ROW
-EXECUTE PROCEDURE "readings_insert_trigger"();
-
--- ----------------------------
--- Primary Key structure for table "public"."readings"
--- ----------------------------
-ALTER TABLE "public"."readings" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Primary Key structure for table "public"."sensor_models"
--- ----------------------------
-ALTER TABLE "public"."sensor_models" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Indexes structure for table sensors
--- ----------------------------
-CREATE INDEX "model_idx" ON "public"."sensors" USING btree ("model");
-
--- ----------------------------
--- Primary Key structure for table "public"."sensors"
--- ----------------------------
-ALTER TABLE "public"."sensors" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Primary Key structure for table "public"."sessions"
--- ----------------------------
-ALTER TABLE "public"."sessions" ADD PRIMARY KEY ("session_id");
-
--- ----------------------------
--- Primary Key structure for table "public"."settings"
--- ----------------------------
-ALTER TABLE "public"."settings" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Indexes structure for table strings
--- ----------------------------
-CREATE INDEX "name_idx" ON "public"."strings" USING btree ("name");
-
--- ----------------------------
--- Primary Key structure for table "public"."strings"
--- ----------------------------
-ALTER TABLE "public"."strings" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Primary Key structure for table "public"."transductor_types"
--- ----------------------------
-ALTER TABLE "public"."transductor_types" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Primary Key structure for table "public"."transductors"
--- ----------------------------
-ALTER TABLE "public"."transductors" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Indexes structure for table users
--- ----------------------------
-CREATE INDEX "enabled_idx" ON "public"."users" USING btree ("preferences");
-CREATE UNIQUE INDEX "login_idx" ON "public"."users" USING btree ("login");
-CREATE INDEX "role_idx" ON "public"."users" USING btree ("role");
-
--- ----------------------------
--- Primary Key structure for table "public"."users"
--- ----------------------------
-ALTER TABLE "public"."users" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Indexes structure for table zones
--- ----------------------------
-CREATE INDEX "zone_enabled_idx" ON "public"."zones" USING btree ("enabled");
-
--- ----------------------------
--- Primary Key structure for table "public"."zones"
--- ----------------------------
-ALTER TABLE "public"."zones" ADD PRIMARY KEY ("id");
-
--- ----------------------------
--- Foreign Key structure for table "public"."groups"
--- ----------------------------
-ALTER TABLE "public"."groups" ADD FOREIGN KEY ("node") REFERENCES "public"."nodes" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- ----------------------------
--- Foreign Key structure for table "public"."nodes"
--- ----------------------------
-ALTER TABLE "public"."nodes" ADD FOREIGN KEY ("zone") REFERENCES "public"."zones" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- ----------------------------
--- Foreign Key structure for table "public"."readings"
--- ----------------------------
-ALTER TABLE "public"."readings" ADD FOREIGN KEY ("sensor_id") REFERENCES "public"."sensors" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-ALTER TABLE "public"."readings" ADD FOREIGN KEY ("transductor_id") REFERENCES "public"."transductors" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- ----------------------------
--- Foreign Key structure for table "public"."sensors"
--- ----------------------------
-ALTER TABLE "public"."sensors" ADD FOREIGN KEY ("group") REFERENCES "public"."groups" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-ALTER TABLE "public"."sensors" ADD FOREIGN KEY ("model") REFERENCES "public"."sensor_models" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-
--- ----------------------------
--- Foreign Key structure for table "public"."transductors"
--- ----------------------------
-ALTER TABLE "public"."transductors" ADD FOREIGN KEY ("type") REFERENCES "public"."transductor_types" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
-ALTER TABLE "public"."transductors" ADD FOREIGN KEY ("sensor") REFERENCES "public"."sensors" ("id") ON DELETE NO ACTION ON UPDATE NO ACTION;
+INHERITS (readings);
+
+
+ALTER TABLE public.readings_september OWNER TO postgres;
+
+--
+-- Name: sensor_models_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE sensor_models_id_seq
+    START WITH 2
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sensor_models_id_seq OWNER TO postgres;
+
+--
+-- Name: sensor_models; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE sensor_models (
+    id integer DEFAULT nextval('sensor_models_id_seq'::regclass) NOT NULL,
+    name character varying(100) DEFAULT ''::character varying NOT NULL,
+    details text NOT NULL
+);
+
+
+ALTER TABLE public.sensor_models OWNER TO postgres;
+
+--
+-- Name: sensors_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE sensors_id_seq
+    START WITH 6
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.sensors_id_seq OWNER TO postgres;
+
+--
+-- Name: sensors; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE sensors (
+    id integer DEFAULT nextval('sensors_id_seq'::regclass) NOT NULL,
+    name character varying(100) DEFAULT ''::character varying NOT NULL,
+    hwaddress character varying(16) DEFAULT ''::character varying NOT NULL,
+    model integer DEFAULT 0 NOT NULL,
+    "group" integer NOT NULL,
+    enabled boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.sensors OWNER TO postgres;
+
+--
+-- Name: sessions; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE sessions (
+    session_id character varying(40) DEFAULT 0 NOT NULL,
+    ip_address character varying(16) DEFAULT 0 NOT NULL,
+    user_agent character varying(255) NOT NULL,
+    last_activity integer DEFAULT 0 NOT NULL,
+    user_data text NOT NULL
+);
+
+
+ALTER TABLE public.sessions OWNER TO postgres;
+
+--
+-- Name: settings_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE settings_id_seq
+    START WITH 6
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.settings_id_seq OWNER TO postgres;
+
+--
+-- Name: settings; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE settings (
+    id integer DEFAULT nextval('settings_id_seq'::regclass) NOT NULL,
+    visible boolean DEFAULT true NOT NULL,
+    name character varying(20) DEFAULT ''::character varying NOT NULL,
+    value character varying(20) DEFAULT ''::character varying NOT NULL
+);
+
+
+ALTER TABLE public.settings OWNER TO postgres;
+
+--
+-- Name: strings_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE strings_id_seq
+    START WITH 6
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.strings_id_seq OWNER TO postgres;
+
+--
+-- Name: strings; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE strings (
+    id integer DEFAULT nextval('strings_id_seq'::regclass) NOT NULL,
+    lang character varying(8) DEFAULT ''::character varying NOT NULL,
+    name character varying(50) DEFAULT ''::character varying NOT NULL,
+    text character varying(100) DEFAULT NULL::character varying NOT NULL
+);
+
+
+ALTER TABLE public.strings OWNER TO postgres;
+
+--
+-- Name: transductor_class; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE transductor_class (
+    id integer NOT NULL,
+    name character varying DEFAULT ''::character varying NOT NULL
+);
+
+
+ALTER TABLE public.transductor_class OWNER TO postgres;
+
+--
+-- Name: transductor_class_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE transductor_class_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.transductor_class_id_seq OWNER TO postgres;
+
+--
+-- Name: transductor_class_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE transductor_class_id_seq OWNED BY transductor_class.id;
+
+
+--
+-- Name: transductor_types_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE transductor_types_id_seq
+    START WITH 4
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.transductor_types_id_seq OWNER TO postgres;
+
+--
+-- Name: transductor_types; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE transductor_types (
+    id integer DEFAULT nextval('transductor_types_id_seq'::regclass) NOT NULL,
+    name character varying(50) DEFAULT ''::character varying NOT NULL,
+    size_bytes smallint DEFAULT 1 NOT NULL,
+    conversion character varying(100) DEFAULT '(X)'::character varying NOT NULL,
+    units character varying(25) DEFAULT ''::character varying NOT NULL,
+    details text NOT NULL,
+    picture bytea
+);
+
+
+ALTER TABLE public.transductor_types OWNER TO postgres;
+
+--
+-- Name: transductors_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE transductors_id_seq
+    START WITH 19
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.transductors_id_seq OWNER TO postgres;
+
+--
+-- Name: transductors; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE transductors (
+    id integer DEFAULT nextval('transductors_id_seq'::regclass) NOT NULL,
+    type integer DEFAULT 0 NOT NULL,
+    sensor integer DEFAULT 0 NOT NULL,
+    class integer DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.transductors OWNER TO postgres;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE users_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_id_seq OWNER TO postgres;
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE users (
+    id integer DEFAULT nextval('users_id_seq'::regclass) NOT NULL,
+    name character varying(100) NOT NULL,
+    login character varying(10) NOT NULL,
+    email character varying(100) NOT NULL,
+    salt character varying(8) NOT NULL,
+    hash character varying(128) NOT NULL,
+    role character varying(10) NOT NULL,
+    phone character varying(20) DEFAULT ''::character varying NOT NULL,
+    preferences text DEFAULT ''::character varying NOT NULL,
+    enabled boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- Name: zones_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE zones_id_seq
+    START WITH 2
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.zones_id_seq OWNER TO postgres;
+
+--
+-- Name: zones; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE zones (
+    id integer DEFAULT nextval('zones_id_seq'::regclass) NOT NULL,
+    name character varying(50) DEFAULT ''::character varying NOT NULL,
+    enabled boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.zones OWNER TO postgres;
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY action_sets ALTER COLUMN id SET DEFAULT nextval('action_sets_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY actions ALTER COLUMN id SET DEFAULT nextval('actions_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY event_classes ALTER COLUMN id SET DEFAULT nextval('event_classes_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY transductor_class ALTER COLUMN id SET DEFAULT nextval('transductor_class_id_seq'::regclass);
+
+
+--
+-- Name: action_sets_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY action_sets
+    ADD CONSTRAINT action_sets_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: actions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY actions
+    ADD CONSTRAINT actions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: api_keys_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY api_keys
+    ADD CONSTRAINT api_keys_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: api_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY api_logs
+    ADD CONSTRAINT api_logs_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: event_classes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY event_classes
+    ADD CONSTRAINT event_classes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: events_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT events_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: groups_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY groups
+    ADD CONSTRAINT groups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: news_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY news
+    ADD CONSTRAINT news_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: nodes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY nodes
+    ADD CONSTRAINT nodes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_april_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_april
+    ADD CONSTRAINT readings_april_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_august_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_august
+    ADD CONSTRAINT readings_august_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_december_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_december
+    ADD CONSTRAINT readings_december_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_february_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_february
+    ADD CONSTRAINT readings_february_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_january_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_january
+    ADD CONSTRAINT readings_january_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_july_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_july
+    ADD CONSTRAINT readings_july_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_june_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_june
+    ADD CONSTRAINT readings_june_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_march_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_march
+    ADD CONSTRAINT readings_march_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_master_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings
+    ADD CONSTRAINT readings_master_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_may_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_may
+    ADD CONSTRAINT readings_may_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_november_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_november
+    ADD CONSTRAINT readings_november_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_october_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_october
+    ADD CONSTRAINT readings_october_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: readings_september_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY readings_september
+    ADD CONSTRAINT readings_september_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sensor_models_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY sensor_models
+    ADD CONSTRAINT sensor_models_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sensors_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY sensors
+    ADD CONSTRAINT sensors_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY sessions
+    ADD CONSTRAINT sessions_pkey PRIMARY KEY (session_id);
+
+
+--
+-- Name: settings_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY settings
+    ADD CONSTRAINT settings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: strings_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY strings
+    ADD CONSTRAINT strings_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: transductor_class_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY transductor_class
+    ADD CONSTRAINT transductor_class_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: transductor_types_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY transductor_types
+    ADD CONSTRAINT transductor_types_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: transductors_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY transductors
+    ADD CONSTRAINT transductors_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: zones_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY zones
+    ADD CONSTRAINT zones_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: april_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX april_sensor_id_idx ON readings_april USING btree (sensor_id);
+
+
+--
+-- Name: april_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX april_timestamp_idx ON readings_april USING btree ("timestamp");
+
+
+--
+-- Name: april_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX april_transductor_id_idx ON readings_april USING btree (transductor_id);
+
+
+--
+-- Name: august_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX august_sensor_id_idx ON readings_august USING btree (sensor_id);
+
+
+--
+-- Name: august_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX august_timestamp_idx ON readings_august USING btree ("timestamp");
+
+
+--
+-- Name: august_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX august_transductor_id_idx ON readings_august USING btree (transductor_id);
+
+
+--
+-- Name: date_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX date_idx ON news USING btree (date);
+
+
+--
+-- Name: december_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX december_sensor_id_idx ON readings_december USING btree (sensor_id);
+
+
+--
+-- Name: december_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX december_timestamp_idx ON readings_december USING btree ("timestamp");
+
+
+--
+-- Name: december_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX december_transductor_id_idx ON readings_december USING btree (transductor_id);
+
+
+--
+-- Name: enabled_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX enabled_idx ON users USING btree (preferences);
+
+
+--
+-- Name: events_action_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX events_action_idx ON events USING btree (action_set);
+
+
+--
+-- Name: events_class_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX events_class_idx ON events USING btree (class);
+
+
+--
+-- Name: events_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX events_timestamp_idx ON events USING btree ("timestamp");
+
+
+--
+-- Name: february_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX february_sensor_id_idx ON readings_february USING btree (sensor_id);
+
+
+--
+-- Name: february_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX february_timestamp_idx ON readings_february USING btree ("timestamp");
+
+
+--
+-- Name: february_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX february_transductor_id_idx ON readings_february USING btree (transductor_id);
+
+
+--
+-- Name: january_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX january_sensor_id_idx ON readings_january USING btree (sensor_id);
+
+
+--
+-- Name: january_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX january_timestamp_idx ON readings_january USING btree ("timestamp");
+
+
+--
+-- Name: january_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX january_transductor_id_idx ON readings_january USING btree (transductor_id);
+
+
+--
+-- Name: july_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX july_sensor_id_idx ON readings_july USING btree (sensor_id);
+
+
+--
+-- Name: july_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX july_timestamp_idx ON readings_july USING btree ("timestamp");
+
+
+--
+-- Name: july_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX july_transductor_id_idx ON readings_july USING btree (transductor_id);
+
+
+--
+-- Name: june_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX june_sensor_id_idx ON readings_june USING btree (sensor_id);
+
+
+--
+-- Name: june_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX june_timestamp_idx ON readings_june USING btree ("timestamp");
+
+
+--
+-- Name: june_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX june_transductor_id_idx ON readings_june USING btree (transductor_id);
+
+
+--
+-- Name: login_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE UNIQUE INDEX login_idx ON users USING btree (login);
+
+
+--
+-- Name: march_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX march_sensor_id_idx ON readings_march USING btree (sensor_id);
+
+
+--
+-- Name: march_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX march_timestamp_idx ON readings_march USING btree ("timestamp");
+
+
+--
+-- Name: march_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX march_transductor_id_idx ON readings_march USING btree (transductor_id);
+
+
+--
+-- Name: may_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX may_sensor_id_idx ON readings_may USING btree (sensor_id);
+
+
+--
+-- Name: may_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX may_timestamp_idx ON readings_may USING btree ("timestamp");
+
+
+--
+-- Name: may_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX may_transductor_id_idx ON readings_may USING btree (transductor_id);
+
+
+--
+-- Name: model_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX model_idx ON sensors USING btree (model);
+
+
+--
+-- Name: name_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX name_idx ON strings USING btree (name);
+
+
+--
+-- Name: november_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX november_sensor_id_idx ON readings_november USING btree (sensor_id);
+
+
+--
+-- Name: november_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX november_timestamp_idx ON readings_november USING btree ("timestamp");
+
+
+--
+-- Name: november_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX november_transductor_id_idx ON readings_november USING btree (transductor_id);
+
+
+--
+-- Name: october_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX october_sensor_id_idx ON readings_october USING btree (sensor_id);
+
+
+--
+-- Name: october_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX october_timestamp_idx ON readings_october USING btree ("timestamp");
+
+
+--
+-- Name: october_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX october_transductor_id_idx ON readings_october USING btree (transductor_id);
+
+
+--
+-- Name: reach_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX reach_idx ON news USING btree (reach, reach_id);
+
+
+--
+-- Name: role_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX role_idx ON users USING btree (role);
+
+
+--
+-- Name: sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX sensor_id_idx ON readings USING btree (sensor_id);
+
+
+--
+-- Name: september_sensor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX september_sensor_id_idx ON readings_september USING btree (sensor_id);
+
+
+--
+-- Name: september_timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX september_timestamp_idx ON readings_september USING btree ("timestamp");
+
+
+--
+-- Name: september_transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX september_transductor_id_idx ON readings_september USING btree (transductor_id);
+
+
+--
+-- Name: timestamp_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX timestamp_idx ON readings USING btree ("timestamp");
+
+
+--
+-- Name: transductor_id_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX transductor_id_idx ON readings USING btree (transductor_id);
+
+
+--
+-- Name: zone_enabled_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE INDEX zone_enabled_idx ON zones USING btree (enabled);
+
+
+--
+-- Name: insert_readings_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER insert_readings_trigger BEFORE INSERT ON readings FOR EACH ROW EXECUTE PROCEDURE readings_insert_trigger();
+
+
+--
+-- Name: action_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT action_fkey FOREIGN KEY (action_set) REFERENCES action_sets(id);
+
+
+--
+-- Name: action_set_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY event_classes
+    ADD CONSTRAINT action_set_fkey FOREIGN KEY (action_set) REFERENCES action_sets(id);
+
+
+--
+-- Name: class_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT class_fkey FOREIGN KEY (class) REFERENCES event_classes(id);
+
+
+--
+-- Name: groups_node_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY groups
+    ADD CONSTRAINT groups_node_fkey FOREIGN KEY (node) REFERENCES nodes(id);
+
+
+--
+-- Name: nodes_zone_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY nodes
+    ADD CONSTRAINT nodes_zone_fkey FOREIGN KEY (zone) REFERENCES zones(id);
+
+
+--
+-- Name: reading_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY events
+    ADD CONSTRAINT reading_fkey FOREIGN KEY (reading) REFERENCES readings(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_april
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_august
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_december
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_february
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_january
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_july
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_june
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_march
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_may
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_november
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_october
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_sensor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_september
+    ADD CONSTRAINT readings_sensor_id_fkey FOREIGN KEY (sensor_id) REFERENCES sensors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_april
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_august
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_december
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_february
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_january
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_july
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_june
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_march
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_may
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_november
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_october
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: readings_transductor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY readings_september
+    ADD CONSTRAINT readings_transductor_id_fkey FOREIGN KEY (transductor_id) REFERENCES transductors(id);
+
+
+--
+-- Name: sensors_group_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY sensors
+    ADD CONSTRAINT sensors_group_fkey FOREIGN KEY ("group") REFERENCES groups(id);
+
+
+--
+-- Name: sensors_model_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY sensors
+    ADD CONSTRAINT sensors_model_fkey FOREIGN KEY (model) REFERENCES sensor_models(id);
+
+
+--
+-- Name: set_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY actions
+    ADD CONSTRAINT set_fkey FOREIGN KEY (set) REFERENCES action_sets(id);
+
+
+--
+-- Name: transductor_class_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY event_classes
+    ADD CONSTRAINT transductor_class_fkey FOREIGN KEY (transductor_class) REFERENCES transductor_class(id);
+
+
+--
+-- Name: transductors_class_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY transductors
+    ADD CONSTRAINT transductors_class_fkey FOREIGN KEY (class) REFERENCES transductor_class(id);
+
+
+--
+-- Name: transductors_sensor_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY transductors
+    ADD CONSTRAINT transductors_sensor_fkey FOREIGN KEY (sensor) REFERENCES sensors(id);
+
+
+--
+-- Name: transductors_type_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY transductors
+    ADD CONSTRAINT transductors_type_fkey FOREIGN KEY (type) REFERENCES transductor_types(id);
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: postgres
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM postgres;
+GRANT ALL ON SCHEMA public TO postgres;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
