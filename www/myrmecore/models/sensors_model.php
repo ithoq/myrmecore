@@ -32,6 +32,16 @@ class Sensors_model extends CI_Model {
 		}				
 		return $result;		
 	}
+	
+	function getSensorShort($sensor_id)
+	{
+        $result = array();
+        $query = $this->db->get_where('sensors', array('id' => $sensor_id));
+        if ($query->num_rows() > 0) {
+            $result = $query->row_array(); 
+        }     
+        return $result;   		
+	}		
     
     function getSensor($sensor_id)
     {
