@@ -25,6 +25,41 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
+-- Name: check_reading_for_events_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
+--
+
+CREATE FUNCTION check_reading_for_events_trigger() RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$DECLARE
+readingClass INTEGER;
+eventClasses RECORD;
+BEGIN
+	SELECT class INTO readingClass FROM transductors WHERE id = NEW.transductor_id;
+	IF FOUND AND readingClass IS NOT NULL THEN
+		FOR eventClasses IN SELECT * FROM event_classes WHERE transductor_class = readingClass AND enabled = TRUE ORDER BY id ASC LOOP
+
+		IF eventClasses.relation = 'GREATER_OR_EQUAL' THEN
+			IF NEW.value >= eventClasses.value THEN
+			INSERT INTO events (reading, class, action_set) VALUES (NEW.id, eventClasses.id, eventClasses.action_set);
+			END IF;
+		END IF;
+
+		IF eventClasses.relation = 'LESSER_OR_EQUAL' THEN
+			IF NEW.value <= eventClasses.value THEN
+			INSERT INTO events (reading, class, action_set) VALUES (NEW.id, eventClasses.id, eventClasses.action_set);
+			END IF;
+		END IF;
+
+		END LOOP;
+	END IF;
+	RETURN NULL;
+END;
+ $$;
+
+
+ALTER FUNCTION public.check_reading_for_events_trigger() OWNER TO postgres;
+
+--
 -- Name: readings_insert_trigger(); Type: FUNCTION; Schema: public; Owner: postgres
 --
 
@@ -1494,6 +1529,90 @@ CREATE INDEX zone_enabled_idx ON zones USING btree (enabled);
 
 
 --
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_may FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_june FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_january FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_february FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_march FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_april FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_july FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_august FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_september FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_october FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_november FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
+-- Name: check_for_events_trigger; Type: TRIGGER; Schema: public; Owner: postgres
+--
+
+CREATE TRIGGER check_for_events_trigger AFTER INSERT ON readings_december FOR EACH ROW EXECUTE PROCEDURE check_reading_for_events_trigger();
+
+
+--
 -- Name: insert_readings_trigger; Type: TRIGGER; Schema: public; Owner: postgres
 --
 
@@ -1538,14 +1657,6 @@ ALTER TABLE ONLY groups
 
 ALTER TABLE ONLY nodes
     ADD CONSTRAINT nodes_zone_fkey FOREIGN KEY (zone) REFERENCES zones(id);
-
-
---
--- Name: reading_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY events
-    ADD CONSTRAINT reading_fkey FOREIGN KEY (reading) REFERENCES readings(id);
 
 
 --
@@ -1820,6 +1931,506 @@ REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- Name: action_sets; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE action_sets FROM PUBLIC;
+REVOKE ALL ON TABLE action_sets FROM postgres;
+GRANT ALL ON TABLE action_sets TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE action_sets TO myrmecore;
+
+
+--
+-- Name: action_sets_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE action_sets_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE action_sets_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE action_sets_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE action_sets_id_seq TO myrmecore;
+
+
+--
+-- Name: actions; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE actions FROM PUBLIC;
+REVOKE ALL ON TABLE actions FROM postgres;
+GRANT ALL ON TABLE actions TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE actions TO myrmecore;
+
+
+--
+-- Name: actions_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE actions_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE actions_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE actions_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE actions_id_seq TO myrmecore;
+
+
+--
+-- Name: api_keys; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE api_keys FROM PUBLIC;
+REVOKE ALL ON TABLE api_keys FROM postgres;
+GRANT ALL ON TABLE api_keys TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE api_keys TO myrmecore;
+
+
+--
+-- Name: api_logs_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE api_logs_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE api_logs_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE api_logs_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE api_logs_id_seq TO myrmecore;
+
+
+--
+-- Name: api_logs; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE api_logs FROM PUBLIC;
+REVOKE ALL ON TABLE api_logs FROM postgres;
+GRANT ALL ON TABLE api_logs TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE api_logs TO myrmecore;
+
+
+--
+-- Name: event_classes; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE event_classes FROM PUBLIC;
+REVOKE ALL ON TABLE event_classes FROM postgres;
+GRANT ALL ON TABLE event_classes TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE event_classes TO myrmecore;
+
+
+--
+-- Name: event_classes_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE event_classes_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE event_classes_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE event_classes_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE event_classes_id_seq TO myrmecore;
+
+
+--
+-- Name: events; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE events FROM PUBLIC;
+REVOKE ALL ON TABLE events FROM postgres;
+GRANT ALL ON TABLE events TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE events TO myrmecore;
+
+
+--
+-- Name: events_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE events_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE events_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE events_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE events_id_seq TO myrmecore;
+
+
+--
+-- Name: groups_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE groups_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE groups_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE groups_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE groups_id_seq TO myrmecore;
+
+
+--
+-- Name: groups; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE groups FROM PUBLIC;
+REVOKE ALL ON TABLE groups FROM postgres;
+GRANT ALL ON TABLE groups TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE groups TO myrmecore;
+
+
+--
+-- Name: news_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE news_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE news_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE news_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE news_id_seq TO myrmecore;
+
+
+--
+-- Name: news; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE news FROM PUBLIC;
+REVOKE ALL ON TABLE news FROM postgres;
+GRANT ALL ON TABLE news TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE news TO myrmecore;
+
+
+--
+-- Name: nodes_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE nodes_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE nodes_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE nodes_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE nodes_id_seq TO myrmecore;
+
+
+--
+-- Name: nodes; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE nodes FROM PUBLIC;
+REVOKE ALL ON TABLE nodes FROM postgres;
+GRANT ALL ON TABLE nodes TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE nodes TO myrmecore;
+
+
+--
+-- Name: readings_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE readings_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE readings_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE readings_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE readings_id_seq TO myrmecore;
+
+
+--
+-- Name: readings; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings FROM PUBLIC;
+REVOKE ALL ON TABLE readings FROM postgres;
+GRANT ALL ON TABLE readings TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings TO myrmecore;
+
+
+--
+-- Name: readings_april; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_april FROM PUBLIC;
+REVOKE ALL ON TABLE readings_april FROM postgres;
+GRANT ALL ON TABLE readings_april TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_april TO myrmecore;
+
+
+--
+-- Name: readings_august; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_august FROM PUBLIC;
+REVOKE ALL ON TABLE readings_august FROM postgres;
+GRANT ALL ON TABLE readings_august TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_august TO myrmecore;
+
+
+--
+-- Name: readings_december; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_december FROM PUBLIC;
+REVOKE ALL ON TABLE readings_december FROM postgres;
+GRANT ALL ON TABLE readings_december TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_december TO myrmecore;
+
+
+--
+-- Name: readings_february; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_february FROM PUBLIC;
+REVOKE ALL ON TABLE readings_february FROM postgres;
+GRANT ALL ON TABLE readings_february TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_february TO myrmecore;
+
+
+--
+-- Name: readings_january; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_january FROM PUBLIC;
+REVOKE ALL ON TABLE readings_january FROM postgres;
+GRANT ALL ON TABLE readings_january TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_january TO myrmecore;
+
+
+--
+-- Name: readings_july; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_july FROM PUBLIC;
+REVOKE ALL ON TABLE readings_july FROM postgres;
+GRANT ALL ON TABLE readings_july TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_july TO myrmecore;
+
+
+--
+-- Name: readings_june; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_june FROM PUBLIC;
+REVOKE ALL ON TABLE readings_june FROM postgres;
+GRANT ALL ON TABLE readings_june TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_june TO myrmecore;
+
+
+--
+-- Name: readings_march; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_march FROM PUBLIC;
+REVOKE ALL ON TABLE readings_march FROM postgres;
+GRANT ALL ON TABLE readings_march TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_march TO myrmecore;
+
+
+--
+-- Name: readings_may; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_may FROM PUBLIC;
+REVOKE ALL ON TABLE readings_may FROM postgres;
+GRANT ALL ON TABLE readings_may TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_may TO myrmecore;
+
+
+--
+-- Name: readings_november; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_november FROM PUBLIC;
+REVOKE ALL ON TABLE readings_november FROM postgres;
+GRANT ALL ON TABLE readings_november TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_november TO myrmecore;
+
+
+--
+-- Name: readings_october; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_october FROM PUBLIC;
+REVOKE ALL ON TABLE readings_october FROM postgres;
+GRANT ALL ON TABLE readings_october TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_october TO myrmecore;
+
+
+--
+-- Name: readings_september; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE readings_september FROM PUBLIC;
+REVOKE ALL ON TABLE readings_september FROM postgres;
+GRANT ALL ON TABLE readings_september TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE readings_september TO myrmecore;
+
+
+--
+-- Name: sensor_models_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE sensor_models_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE sensor_models_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE sensor_models_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE sensor_models_id_seq TO myrmecore;
+
+
+--
+-- Name: sensor_models; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE sensor_models FROM PUBLIC;
+REVOKE ALL ON TABLE sensor_models FROM postgres;
+GRANT ALL ON TABLE sensor_models TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE sensor_models TO myrmecore;
+
+
+--
+-- Name: sensors_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE sensors_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE sensors_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE sensors_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE sensors_id_seq TO myrmecore;
+
+
+--
+-- Name: sensors; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE sensors FROM PUBLIC;
+REVOKE ALL ON TABLE sensors FROM postgres;
+GRANT ALL ON TABLE sensors TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE sensors TO myrmecore;
+
+
+--
+-- Name: sessions; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE sessions FROM PUBLIC;
+REVOKE ALL ON TABLE sessions FROM postgres;
+GRANT ALL ON TABLE sessions TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE sessions TO myrmecore;
+
+
+--
+-- Name: settings_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE settings_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE settings_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE settings_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE settings_id_seq TO myrmecore;
+
+
+--
+-- Name: settings; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE settings FROM PUBLIC;
+REVOKE ALL ON TABLE settings FROM postgres;
+GRANT ALL ON TABLE settings TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE settings TO myrmecore;
+
+
+--
+-- Name: strings_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE strings_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE strings_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE strings_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE strings_id_seq TO myrmecore;
+
+
+--
+-- Name: strings; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE strings FROM PUBLIC;
+REVOKE ALL ON TABLE strings FROM postgres;
+GRANT ALL ON TABLE strings TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE strings TO myrmecore;
+
+
+--
+-- Name: transductor_class; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE transductor_class FROM PUBLIC;
+REVOKE ALL ON TABLE transductor_class FROM postgres;
+GRANT ALL ON TABLE transductor_class TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE transductor_class TO myrmecore;
+
+
+--
+-- Name: transductor_class_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE transductor_class_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE transductor_class_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE transductor_class_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE transductor_class_id_seq TO myrmecore;
+
+
+--
+-- Name: transductor_types_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE transductor_types_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE transductor_types_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE transductor_types_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE transductor_types_id_seq TO myrmecore;
+
+
+--
+-- Name: transductor_types; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE transductor_types FROM PUBLIC;
+REVOKE ALL ON TABLE transductor_types FROM postgres;
+GRANT ALL ON TABLE transductor_types TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE transductor_types TO myrmecore;
+
+
+--
+-- Name: transductors_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE transductors_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE transductors_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE transductors_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE transductors_id_seq TO myrmecore;
+
+
+--
+-- Name: transductors; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE transductors FROM PUBLIC;
+REVOKE ALL ON TABLE transductors FROM postgres;
+GRANT ALL ON TABLE transductors TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE transductors TO myrmecore;
+
+
+--
+-- Name: users_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE users_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE users_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE users_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE users_id_seq TO myrmecore;
+
+
+--
+-- Name: users; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE users FROM PUBLIC;
+REVOKE ALL ON TABLE users FROM postgres;
+GRANT ALL ON TABLE users TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE users TO myrmecore;
+
+
+--
+-- Name: zones_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE zones_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE zones_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE zones_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE zones_id_seq TO myrmecore;
+
+
+--
+-- Name: zones; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE zones FROM PUBLIC;
+REVOKE ALL ON TABLE zones FROM postgres;
+GRANT ALL ON TABLE zones TO postgres;
+GRANT SELECT,INSERT,UPDATE ON TABLE zones TO myrmecore;
 
 
 --
