@@ -20,17 +20,28 @@ class Sensors_model extends CI_Model {
         parent::__construct();
     }
     
-    function getEnabledSensors($groupid)
+    function getSensors($params)
     {
-		$this->db->select('id,name')->from('sensors')->where(array('group' => $groupid,'enabled' => 'TRUE'))->order_by('id','ASC');
+		$this->db->from('sensors')->where($params)->order_by('id','ASC');
 		$query = $this->db->get();		
 		
 		$result = array();
 		foreach ($query->result_array() as $row)
 		{
-			$result[$row['id']] = $row['name'];
+			$result[$row['id']] = $row;
 		}				
 		return $result;		
+	}
+	
+	function getEnabledSensors($group)
+	{
+		$sensors = $this->getSensors(array('group' => $group,'enabled' => 'TRUE'));
+		$result = array();
+		foreach ($sensors as $sensor)
+		{
+			$result[$sensor['id']] = $sensor['name'];
+		}
+		return $result;
 	}
 	
 	function getSensorShort($sensor_id)
@@ -63,4 +74,32 @@ class Sensors_model extends CI_Model {
         return $result;            
     }
 
+	function add($data)
+	{
+		$this->db->trans_begin();
+		$this->db->insert('sensors', $data); 
+
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			return false;
+		} else {
+			$this->db->trans_commit();
+			return $this->db->insert_id();
+		}		
+	}
+	
+	function edit($id,$data)
+	{
+		$this->db->trans_begin();
+		$this->db->where('id', $id);
+		$this->db->update('sensors', $data); 
+
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			return false;
+		} else {
+			$this->db->trans_commit();
+			return $this->db->affected_rows();
+		}	
+	}
 }
