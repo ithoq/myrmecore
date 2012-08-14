@@ -31,27 +31,27 @@ SET search_path = public, pg_catalog;
 CREATE FUNCTION check_reading_for_events_trigger() RETURNS trigger
     LANGUAGE plpgsql
     AS $$DECLARE
-readingClass INTEGER;
-eventClasses RECORD;
+transductorID INTEGER := NEW.transductor_id;
+transductorRecord RECORD;
+
 BEGIN
-	SELECT class INTO readingClass FROM transductors WHERE id = NEW.transductor_id;
-	IF FOUND AND readingClass IS NOT NULL THEN
-		FOR eventClasses IN SELECT * FROM event_classes WHERE transductor_class = readingClass AND enabled = TRUE ORDER BY id ASC LOOP
-
-		IF eventClasses.relation = 'GREATER_OR_EQUAL' THEN
-			IF NEW.value >= eventClasses.value THEN
-			INSERT INTO events (reading, class, action_set) VALUES (NEW.id, eventClasses.id, eventClasses.action_set);
+	SELECT * INTO transductorRecord FROM transductors WHERE id = transductorID;	
+	IF FOUND THEN
+	
+		IF transductorRecord.minimum_value IS NOT NULL THEN
+			IF NEW.value <= transductorRecord.minimum_value THEN
+				INSERT INTO events (reading, action_set) VALUES (NEW.id, transductorRecord.action_set);
+			END IF;
+		END IF;
+	
+		IF transductorRecord.maximum_value IS NOT NULL THEN
+			IF NEW.value >= transductorRecord.maximum_value THEN
+				INSERT INTO events (reading, action_set) VALUES (NEW.id, transductorRecord.action_set);
 			END IF;
 		END IF;
 
-		IF eventClasses.relation = 'LESSER_OR_EQUAL' THEN
-			IF NEW.value <= eventClasses.value THEN
-			INSERT INTO events (reading, class, action_set) VALUES (NEW.id, eventClasses.id, eventClasses.action_set);
-			END IF;
-		END IF;
-
-		END LOOP;
 	END IF;
+
 	RETURN NULL;
 END;
  $$;
@@ -66,9 +66,8 @@ ALTER FUNCTION public.check_reading_for_events_trigger() OWNER TO postgres;
 CREATE FUNCTION readings_insert_trigger() RETURNS trigger
     LANGUAGE plpgsql
     AS $$DECLARE
-current_month INTEGER;
+current_month INTEGER := date_part('month', now());
 BEGIN
-current_month := date_part('month', NEW.timestamp);
     IF current_month = 1 THEN
         INSERT INTO readings_january VALUES (NEW.*);
     ELSIF current_month = 2 THEN
@@ -108,12 +107,48 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: action_logs; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE action_logs (
+    id integer NOT NULL,
+    action integer DEFAULT 0 NOT NULL,
+    "timestamp" timestamp without time zone DEFAULT now() NOT NULL,
+    message character varying DEFAULT ''::character varying NOT NULL
+);
+
+
+ALTER TABLE public.action_logs OWNER TO postgres;
+
+--
+-- Name: action_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE action_logs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.action_logs_id_seq OWNER TO postgres;
+
+--
+-- Name: action_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE action_logs_id_seq OWNED BY action_logs.id;
+
+
+--
 -- Name: action_sets; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE action_sets (
     id integer NOT NULL,
-    name character varying DEFAULT ''::character varying NOT NULL
+    name character varying DEFAULT ''::character varying NOT NULL,
+    events_to_run smallint DEFAULT 1 NOT NULL
 );
 
 
@@ -150,6 +185,7 @@ CREATE TABLE actions (
     args character varying NOT NULL,
     set integer DEFAULT 0 NOT NULL,
     name character varying DEFAULT ''::character varying NOT NULL,
+    template integer DEFAULT 0 NOT NULL,
     enabled boolean DEFAULT true NOT NULL
 );
 
@@ -224,51 +260,12 @@ CREATE TABLE api_logs (
 ALTER TABLE public.api_logs OWNER TO postgres;
 
 --
--- Name: event_classes; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE TABLE event_classes (
-    id integer NOT NULL,
-    transductor_class integer DEFAULT 0 NOT NULL,
-    relation character varying DEFAULT ''::character varying NOT NULL,
-    value numeric DEFAULT 0 NOT NULL,
-    name character varying(255) DEFAULT ''::character varying NOT NULL,
-    action_set integer DEFAULT 0 NOT NULL,
-    enabled boolean DEFAULT true NOT NULL
-);
-
-
-ALTER TABLE public.event_classes OWNER TO postgres;
-
---
--- Name: event_classes_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE event_classes_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.event_classes_id_seq OWNER TO postgres;
-
---
--- Name: event_classes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE event_classes_id_seq OWNED BY event_classes.id;
-
-
---
 -- Name: events; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
 --
 
 CREATE TABLE events (
     id integer NOT NULL,
     reading bigint DEFAULT 0 NOT NULL,
-    class integer DEFAULT 0 NOT NULL,
     action_set smallint DEFAULT 0 NOT NULL,
     "timestamp" timestamp without time zone DEFAULT now() NOT NULL,
     cleared boolean DEFAULT false NOT NULL
@@ -325,6 +322,39 @@ CREATE TABLE groups (
 
 
 ALTER TABLE public.groups OWNER TO postgres;
+
+--
+-- Name: templates; Type: TABLE; Schema: public; Owner: postgres; Tablespace: 
+--
+
+CREATE TABLE templates (
+    id integer NOT NULL,
+    body text NOT NULL
+);
+
+
+ALTER TABLE public.templates OWNER TO postgres;
+
+--
+-- Name: mail_templates_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE mail_templates_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.mail_templates_id_seq OWNER TO postgres;
+
+--
+-- Name: mail_templates_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE mail_templates_id_seq OWNED BY templates.id;
+
 
 --
 -- Name: news_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -654,9 +684,13 @@ ALTER TABLE public.sensors_id_seq OWNER TO postgres;
 CREATE TABLE sensors (
     id integer DEFAULT nextval('sensors_id_seq'::regclass) NOT NULL,
     name character varying(100) DEFAULT ''::character varying NOT NULL,
-    hwaddress character varying(16) DEFAULT ''::character varying NOT NULL,
+    long_address character varying DEFAULT ''::character varying NOT NULL,
     model integer DEFAULT 0 NOT NULL,
     "group" integer NOT NULL,
+    short_address character varying DEFAULT ''::character varying NOT NULL,
+    sequence_number smallint DEFAULT 0 NOT NULL,
+    "coordX" smallint DEFAULT 0 NOT NULL,
+    "coordY" smallint DEFAULT 0 NOT NULL,
     enabled boolean DEFAULT true NOT NULL
 );
 
@@ -699,8 +733,8 @@ ALTER TABLE public.settings_id_seq OWNER TO postgres;
 CREATE TABLE settings (
     id integer DEFAULT nextval('settings_id_seq'::regclass) NOT NULL,
     visible boolean DEFAULT true NOT NULL,
-    name character varying(20) DEFAULT ''::character varying NOT NULL,
-    value character varying(20) DEFAULT ''::character varying NOT NULL
+    name character varying DEFAULT ''::character varying NOT NULL,
+    value character varying DEFAULT ''::character varying NOT NULL
 );
 
 
@@ -820,7 +854,10 @@ CREATE TABLE transductors (
     id integer DEFAULT nextval('transductors_id_seq'::regclass) NOT NULL,
     type integer DEFAULT 0 NOT NULL,
     sensor integer DEFAULT 0 NOT NULL,
-    class integer DEFAULT 0 NOT NULL
+    class integer DEFAULT 0 NOT NULL,
+    minimum_value numeric,
+    maximum_value numeric,
+    action_set integer NOT NULL
 );
 
 
@@ -846,12 +883,12 @@ ALTER TABLE public.users_id_seq OWNER TO postgres;
 
 CREATE TABLE users (
     id integer DEFAULT nextval('users_id_seq'::regclass) NOT NULL,
-    name character varying(100) NOT NULL,
+    name character varying(100) DEFAULT ''::character varying NOT NULL,
     login character varying(10) NOT NULL,
-    email character varying(100) NOT NULL,
+    email character varying(100) DEFAULT ''::character varying NOT NULL,
     salt character varying(8) NOT NULL,
     hash character varying(128) NOT NULL,
-    role character varying(10) NOT NULL,
+    role character varying(10) DEFAULT "current_user"() NOT NULL,
     phone character varying(20) DEFAULT ''::character varying NOT NULL,
     preferences text DEFAULT ''::character varying NOT NULL,
     enabled boolean DEFAULT true NOT NULL
@@ -891,6 +928,13 @@ ALTER TABLE public.zones OWNER TO postgres;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
+ALTER TABLE ONLY action_logs ALTER COLUMN id SET DEFAULT nextval('action_logs_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
 ALTER TABLE ONLY action_sets ALTER COLUMN id SET DEFAULT nextval('action_sets_id_seq'::regclass);
 
 
@@ -905,13 +949,6 @@ ALTER TABLE ONLY actions ALTER COLUMN id SET DEFAULT nextval('actions_id_seq'::r
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY event_classes ALTER COLUMN id SET DEFAULT nextval('event_classes_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::regclass);
 
 
@@ -919,7 +956,22 @@ ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
+ALTER TABLE ONLY templates ALTER COLUMN id SET DEFAULT nextval('mail_templates_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
 ALTER TABLE ONLY transductor_class ALTER COLUMN id SET DEFAULT nextval('transductor_class_id_seq'::regclass);
+
+
+--
+-- Name: action_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY action_logs
+    ADD CONSTRAINT action_logs_pkey PRIMARY KEY (id);
 
 
 --
@@ -955,14 +1007,6 @@ ALTER TABLE ONLY api_logs
 
 
 --
--- Name: event_classes_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
---
-
-ALTER TABLE ONLY event_classes
-    ADD CONSTRAINT event_classes_pkey PRIMARY KEY (id);
-
-
---
 -- Name: events_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
 --
 
@@ -976,6 +1020,14 @@ ALTER TABLE ONLY events
 
 ALTER TABLE ONLY groups
     ADD CONSTRAINT groups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: mail_templates_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres; Tablespace: 
+--
+
+ALTER TABLE ONLY templates
+    ADD CONSTRAINT mail_templates_pkey PRIMARY KEY (id);
 
 
 --
@@ -1260,13 +1312,6 @@ CREATE INDEX enabled_idx ON users USING btree (preferences);
 --
 
 CREATE INDEX events_action_idx ON events USING btree (action_set);
-
-
---
--- Name: events_class_idx; Type: INDEX; Schema: public; Owner: postgres; Tablespace: 
---
-
-CREATE INDEX events_class_idx ON events USING btree (class);
 
 
 --
@@ -1628,19 +1673,19 @@ ALTER TABLE ONLY events
 
 
 --
--- Name: action_set_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: action_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY event_classes
-    ADD CONSTRAINT action_set_fkey FOREIGN KEY (action_set) REFERENCES action_sets(id);
+ALTER TABLE ONLY action_logs
+    ADD CONSTRAINT action_fkey FOREIGN KEY (action) REFERENCES actions(id);
 
 
 --
--- Name: class_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: action_sets_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY events
-    ADD CONSTRAINT class_fkey FOREIGN KEY (class) REFERENCES event_classes(id);
+ALTER TABLE ONLY transductors
+    ADD CONSTRAINT action_sets_fkey FOREIGN KEY (action_set) REFERENCES action_sets(id);
 
 
 --
@@ -1892,11 +1937,11 @@ ALTER TABLE ONLY actions
 
 
 --
--- Name: transductor_class_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- Name: template_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY event_classes
-    ADD CONSTRAINT transductor_class_fkey FOREIGN KEY (transductor_class) REFERENCES transductor_class(id);
+ALTER TABLE ONLY actions
+    ADD CONSTRAINT template_fkey FOREIGN KEY (template) REFERENCES templates(id);
 
 
 --
@@ -1931,6 +1976,26 @@ REVOKE ALL ON SCHEMA public FROM PUBLIC;
 REVOKE ALL ON SCHEMA public FROM postgres;
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- Name: action_logs; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE action_logs FROM PUBLIC;
+REVOKE ALL ON TABLE action_logs FROM postgres;
+GRANT ALL ON TABLE action_logs TO postgres;
+GRANT SELECT,INSERT ON TABLE action_logs TO myrmecore;
+
+
+--
+-- Name: action_logs_id_seq; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON SEQUENCE action_logs_id_seq FROM PUBLIC;
+REVOKE ALL ON SEQUENCE action_logs_id_seq FROM postgres;
+GRANT ALL ON SEQUENCE action_logs_id_seq TO postgres;
+GRANT SELECT,UPDATE ON SEQUENCE action_logs_id_seq TO myrmecore;
 
 
 --
@@ -2004,26 +2069,6 @@ GRANT SELECT,INSERT,UPDATE ON TABLE api_logs TO myrmecore;
 
 
 --
--- Name: event_classes; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON TABLE event_classes FROM PUBLIC;
-REVOKE ALL ON TABLE event_classes FROM postgres;
-GRANT ALL ON TABLE event_classes TO postgres;
-GRANT SELECT,INSERT,UPDATE ON TABLE event_classes TO myrmecore;
-
-
---
--- Name: event_classes_id_seq; Type: ACL; Schema: public; Owner: postgres
---
-
-REVOKE ALL ON SEQUENCE event_classes_id_seq FROM PUBLIC;
-REVOKE ALL ON SEQUENCE event_classes_id_seq FROM postgres;
-GRANT ALL ON SEQUENCE event_classes_id_seq TO postgres;
-GRANT SELECT,UPDATE ON SEQUENCE event_classes_id_seq TO myrmecore;
-
-
---
 -- Name: events; Type: ACL; Schema: public; Owner: postgres
 --
 
@@ -2061,6 +2106,16 @@ REVOKE ALL ON TABLE groups FROM PUBLIC;
 REVOKE ALL ON TABLE groups FROM postgres;
 GRANT ALL ON TABLE groups TO postgres;
 GRANT SELECT,INSERT,UPDATE ON TABLE groups TO myrmecore;
+
+
+--
+-- Name: templates; Type: ACL; Schema: public; Owner: postgres
+--
+
+REVOKE ALL ON TABLE templates FROM PUBLIC;
+REVOKE ALL ON TABLE templates FROM postgres;
+GRANT ALL ON TABLE templates TO postgres;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE templates TO myrmecore;
 
 
 --
