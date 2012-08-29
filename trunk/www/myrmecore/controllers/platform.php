@@ -47,6 +47,17 @@ class Platform extends Base_Controller
 			$this->response(NULL, 403);	
 		}		
 	}
+	
+	function list_sensors_get()
+	{
+		if ($this->session->userdata('ID')) {			
+			$this->load->model('Sensors_model', '', TRUE);
+			$result = $this->Sensors_model->getAll();
+			$this->response($result, 200);
+		} else {
+			$this->response(NULL, 403);	
+		}		
+	}
     
     function getsensor_post()
     {

@@ -20,6 +20,25 @@ class Sensors_model extends CI_Model {
         parent::__construct();
     }
     
+    function getAll()
+    {
+		$query = $this->db->get('sensors');	
+		if ($query->num_rows() > 0)
+		{
+			$result = array();
+			foreach ($query->result_array() as $row)
+			{
+				$row_id = $row['id'];
+				unset($row['id']);
+				$result[$row_id] = $row;
+			}
+			return $result;
+		} else {
+			return array();
+		}
+		
+	}
+    
     function getSensors($params)
     {
 		$this->db->from('sensors')->where($params)->order_by('id','ASC');

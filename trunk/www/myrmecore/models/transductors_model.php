@@ -35,6 +35,26 @@ class Transductors_model extends CI_Model {
         } else {
             return array();
         }               
-    }
+    }   
+    
+    function search($params)
+    {
+		$query = $this->db->get_where('transductors', $params);
+		
+		if ($query->num_rows() > 0) {
+			$result = array();
+			foreach ($query->result_array() as $row)
+			{
+				$row_id = $row['id'];
+				unset($row['id']);
+				$result[$row_id] = $row;
+			}				
+			return $result;
+		} else {
+			return array();
+		}
+	}    
+	
+	
 
 }
