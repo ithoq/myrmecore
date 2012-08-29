@@ -1,0 +1,3 @@
+check process python_dispatcher with pidfile /tmp/dispatcher.pid
+	start program "/etc/init.d/myrmecore_dispatcher start"
+	stop program "/etc/init.d/myrmecore_dispatcher stop"

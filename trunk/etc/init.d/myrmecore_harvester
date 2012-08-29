@@ -1,0 +1,40 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          myrmecore
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: myrmecore
+# Description:       Web based, centralized, wireless sensor network management platform
+### END INIT INFO
+
+# Author: Depto. de Ingenieria <administrador@grupodyd.com>
+
+do_start()
+{
+        echo "Opening Serial port"
+        # chmod 777 /dev/ttyS0
+	echo "Starting Harvesting service"
+	screen -A -m -d -S harvester_screen python /opt/myrmecore/harvester.py 2>&1
+}
+
+do_stop()
+{
+	exit 3
+}
+
+case "$1" in
+  start)
+        do_start
+        ;;
+  stop)
+        do_stop
+        ;;
+  *)
+        echo "Usage: $SCRIPTNAME {start|stop}" >&2
+        exit 3
+        ;;
+esac
+
+:

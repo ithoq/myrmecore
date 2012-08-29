@@ -1,0 +1,3 @@
+check process python_harvester with pidfile /tmp/harvester.pid
+	start program "/etc/init.d/myrmecore_harvester start"
+	stop program "/etc/init.d/myrmecore_harvester stop"
