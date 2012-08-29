@@ -20,9 +20,13 @@ class Readings_model extends CI_Model {
         parent::__construct();
     }
     
-    function getReadings($params,$limit)
+    function getReadings($params,$limit,$order)
     {	
-		$this->db->from('readings')->where($params)->order_by('id', 'ASC')->limit($limit);
+		if (strtoupper($order) == 'ASC') {
+			$this->db->from('readings')->where($params)->order_by('id','ASC')->limit($limit);
+		} else {
+			$this->db->from('readings')->where($params)->order_by('id','DESC')->limit($limit);
+		}
 		$query = $this->db->get();
 		
 		$result = array();
@@ -33,8 +37,10 @@ class Readings_model extends CI_Model {
 		{
 			foreach ($query->result_array() as $row)
 			{
-				$readings[$row['id']] = array('sensor_id' => $row['sensor_id'], 'transductor_id' => $row['transductor_id'], 'timestamp' => $row['timestamp'], 'value' => $row['value']);
-			}		
+				$row_id = $row['id'];
+				unset($row['id']);
+				$readings[$row_id] = $row;
+			}	
 			$result['readings'] = $readings;	
 		}		
 		return $result;		

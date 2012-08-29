@@ -125,5 +125,41 @@ class Users_model extends CI_Model {
 		}	
 		return $result;		
 	}
+	
+	function add($userlogin,$password,$role)
+    {
+		$this->load->library('SaltGenerator');
+		
+    	$this->db->select('value')->from('settings')->where('name','hash_loops');
+    	$query = $this->db->get();		
+		$hash_loops = $query->row()->value;		
+		
+    	$this->db->select('value')->from('settings')->where('name','salt_size');
+    	$query = $this->db->get();		
+		$salt_size = $query->row()->value;		
+			
+		$salt = $this->saltgenerator->gen($salt_size);
+		
+		$halfpass = str_split($password,(strlen($password)/2)+1);
+		$hash = hash('whirlpool', $halfpass[0].$salt.$halfpass[1]);
+		
+		for ($i=1; $i<$hash_loops; $i++)
+		{
+			$hash = hash('whirlpool',$hash);
+		}
+		
+		$newrow = array('login' => $userlogin, 'salt' => $salt, 'hash' => $hash, 'role' => $role);
+		$this->db->trans_start();
+		$this->db->insert('users', $newrow); 
+		$user_id = $this->db->insert_id();
+		$this->db->trans_complete();
+		
+		if ($this->db->trans_status() === FALSE)
+		{
+			return NULL;
+		} else {
+			return $user_id;
+		}
+	}
 
 }

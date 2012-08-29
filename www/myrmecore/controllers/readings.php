@@ -26,11 +26,11 @@ class Readings extends Base_Controller
 		if ($this->session->userdata('ID')) {	
 			$params = array();		
 			if ($this->post('start')) {
-				$params['timestamp >='] = $this->post('start');
+				$params['timestamp >='] = date( 'Y-m-d H:i:s', $this->post('start') );
 			} 
 			
 			if ($this->post('end')) {
-				$params['timestamp <='] = $this->post('end');
+				$params['timestamp <='] = date( 'Y-m-d H:i:s', $this->post('end') );
 			} 
 			
 			if (is_numeric($this->post('sensor_id'))) {
@@ -59,10 +59,17 @@ class Readings extends Base_Controller
 			} else {
 				$limit = $this->Settings_model->getValue('default_query_limit');	
 			}	
+			
+			if (in_array($this->post('order'), array('ASC','asc','DESC','desc'))) {
+				$order = $this->post('order');
+			} else {
+				$order = 'ASC';	
+			}	
+					
 			$result = array();
 			
 			if (count($params) > 0) {
-				$result = $this->Readings_model->getReadings($params,$limit);			
+				$result = $this->Readings_model->getReadings($params,$limit,$order);			
 			} else {
 				$result = array('result' => 'FAILED', 'cause' => 'NO_ARGUMENTS_GIVEN');
 			}

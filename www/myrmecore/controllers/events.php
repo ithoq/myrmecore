@@ -24,13 +24,17 @@ class Events extends Base_Controller
     {
         if ($this->session->userdata('ID')) {   
 			if (is_numeric($this->post('limit'))) {
-				$limit = $this->post('limit');
-				$this->load->model('Events_model', '', TRUE);   
-				$params = array();
-				if ($this->post('class')) {
-					$params['class'] = $this->post('class');
-				}
-				$result = $this->Events_model->getEvents($params,$limit);				
+				if (is_numeric($this->post('sensor'))) {
+					$limit = $this->post('limit');
+					$this->load->model('Events_model', '', TRUE);   
+					$params = array();
+					if ($this->post('class')) {
+						$params['class'] = $this->post('class');
+					}
+					$result = $this->Events_model->getEvents($params,$limit);	
+				} else {
+					$this->response(array('result' => 'FAILED','cause' => 'EMPTY_OR_INVALID_SENSOR'), 400);
+				}			
 			} else {
 				$this->response(array('result' => 'FAILED','cause' => 'EMPTY_OR_INVALID_LIMIT'), 400);	
 			} 
